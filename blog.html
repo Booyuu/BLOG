@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOYU | TRANSMISSIONS ARCHIVE</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Rajdhani:wght@500;700&family=Space+Grotesk:wght@300;500&family=Inter:wght@300;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        bg: '#050505',
+                        'accent-blue': '#00f3ff',
+                        'accent-red': '#ff2a2a',
+                        'dim': '#888888',
+                    },
+                    fontFamily: {
+                        serif: ['"Cinzel"', 'serif'],
+                        mono: ['"Space Grotesk"', 'monospace'],
+                        sans: ['"Inter"', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body { background-color: #020202; color: #EAEAEA; font-family: 'Inter', sans-serif; min-height: 100vh; }
+        
+        /* 背景装饰 */
+        #noise-layer { position: fixed; inset: 0; z-index: -1; opacity: 0.05; pointer-events: none; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='1'/%3E%3C/svg%3E"); }
+        #stars { position: fixed; inset: 0; z-index: -2; background: #020202; }
+        .star { position: absolute; background: white; border-radius: 50%; opacity: 0.5; animation: twinkle 3s infinite; }
+        @keyframes twinkle { 0%,100%{opacity:0.3} 50%{opacity:0.8} }
+
+        /* 搜索栏样式 */
+        .search-box {
+            background: rgba(10, 10, 15, 0.8); border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px); transition: all 0.3s;
+        }
+        .search-box:focus-within { border-color: #00f3ff; box-shadow: 0 0 15px rgba(0, 243, 255, 0.2); }
+
+        /* 文章卡片 */
+        .archive-item {
+            border-bottom: 1px solid rgba(255,255,255,0.1); padding: 2rem 0;
+            display: flex; justify-content: space-between; align-items: center;
+            transition: all 0.3s; cursor: pointer; opacity: 0; animation: fadeIn 0.5s forwards;
+        }
+        .archive-item:hover { padding-left: 20px; border-color: #00f3ff; background: linear-gradient(90deg, rgba(0,243,255,0.05), transparent); }
+        .archive-title { font-family: 'Cinzel'; font-size: 1.5rem; color: #ccc; transition: color 0.3s; }
+        .archive-item:hover .archive-title { color: #fff; text-shadow: 0 0 10px rgba(0,243,255,0.5); }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <div id="noise-layer"></div>
+    <div id="stars"></div> <nav class="fixed top-0 w-full p-8 z-50 flex justify-between items-center mix-blend-difference">
+        <a href="index.html" class="font-serif text-xl tracking-widest text-white hover:text-accent-blue transition-colors">← BACK TO TERMINAL</a>
+    </nav>
+
+    <main class="max-w-5xl mx-auto px-8 pt-32 pb-20">
+        
+        <div class="mb-16">
+            <div class="font-mono text-xs text-accent-blue tracking-[0.5em] mb-4">SECTOR: ARCHIVE</div>
+            <h1 class="font-serif text-5xl md:text-7xl text-white mb-8">TRANSMISSIONS</h1>
+            
+            <div class="search-box p-4 flex items-center gap-4 rounded-sm max-w-2xl">
+                <i class="ri-search-line text-dim"></i>
+                <input type="text" id="search-input" placeholder="SEARCH LOGS (KEYWORD / YYYY.MM.DD)..." 
+                       class="bg-transparent w-full outline-none text-white font-mono text-sm tracking-widest placeholder-gray-600 uppercase">
+            </div>
+        </div>
+
+        <div id="posts-container" class="border-t border-white/20">
+            </div>
+        
+        <div id="no-results" class="hidden py-12 text-center font-mono text-dim tracking-widest">
+            // NO DATA FOUND IN SECTOR
+        </div>
+
+    </main>
+
+    <script>
+        // === 1. 极简星空背景 JS ===
+        const stars = document.getElementById('stars');
+        for(let i=0; i<100; i++) {
+            let s = document.createElement('div'); s.className='star';
+            s.style.left = Math.random()*100+'%'; s.style.top = Math.random()*100+'%';
+            s.style.width = Math.random()*2+'px'; s.style.height = s.style.width;
+            s.style.animationDelay = Math.random()*5+'s';
+            stars.appendChild(s);
+        }
+
+        // === 2. 博客数据库 (这是核心！以后你有新文章就在这里加一行) ===
+        const blogData = [
+            {
+                date: "2025.11.28",
+                category: "THOUGHTS",
+                title: "The Future of Algorithmic Art",
+                desc: "探索生成式艺术在现代网页设计中的应用与边界。",
+                link: "post-01.html"
+            },
+            {
+                date: "2025.10.15",
+                category: "TRADING",
+                title: "Finding Alpha in Bear Markets",
+                desc: "如何在下行周期中保持冷静并寻找获利机会。",
+                link: "#" // 还没写就填 #
+            },
+            {
+                date: "2025.09.02",
+                category: "TRAVEL",
+                title: "A Solo Trip to Iceland",
+                desc: "冰岛环岛骑行记录与摄影集。",
+                link: "#"
+            },
+            {
+                date: "2025.08.10",
+                category: "CODE",
+                title: "Building a 3D Website with Three.js",
+                desc: "从零开始构建全息个人终端的技术复盘。",
+                link: "#"
+            }
+        ];
+
+        const container = document.getElementById('posts-container');
+        const searchInput = document.getElementById('search-input');
+        const noResults = document.getElementById('no-results');
+
+        // === 3. 渲染函数 ===
+        function renderPosts(posts) {
+            container.innerHTML = ''; // 清空当前
+            
+            if (posts.length === 0) {
+                noResults.classList.remove('hidden');
+                return;
+            } else {
+                noResults.classList.add('hidden');
+            }
+
+            posts.forEach((post, index) => {
+                // 创建 HTML 结构
+                const article = document.createElement('article');
+                article.className = 'archive-item group';
+                article.style.animationDelay = `${index * 0.1}s`; // 瀑布流动画
+                article.onclick = () => window.location.href = post.link;
+
+                article.innerHTML = `
+                    <div class="flex-1">
+                        <div class="flex items-center gap-4 mb-2">
+                            <span class="font-mono text-xs text-accent-red tracking-widest">${post.date}</span>
+                            <span class="font-mono text-[10px] text-dim border border-white/10 px-2 rounded">${post.category}</span>
+                        </div>
+                        <h3 class="archive-title group-hover:translate-x-2 transition-transform">${post.title}</h3>
+                        <p class="font-sans text-xs text-dim mt-2 max-w-xl line-clamp-1 group-hover:text-gray-400 transition-colors">${post.desc}</p>
+                    </div>
+                    <div class="text-dim group-hover:text-accent-blue transition-colors">
+                        <i class="ri-arrow-right-up-line text-2xl"></i>
+                    </div>
+                `;
+                container.appendChild(article);
+            });
+        }
+
+        // === 4. 搜索逻辑 ===
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            
+            const filtered = blogData.filter(post => {
+                // 搜索范围：标题、日期、分类、描述
+                return post.title.toLowerCase().includes(query) || 
+                       post.date.includes(query) ||
+                       post.category.toLowerCase().includes(query) ||
+                       post.desc.toLowerCase().includes(query);
+            });
+
+            renderPosts(filtered);
+        });
+
+        // 初始化渲染
+        renderPosts(blogData);
+
+    </script>
+</body>
+</html>
