@@ -152,19 +152,45 @@
     <div id="canvas-container"></div>
 
     <nav class="fixed top-0 w-full p-8 md:px-12 z-50 flex justify-between items-center mix-blend-difference pointer-events-none">
-        <div class="pointer-events-auto">
-            <a href="#" class="font-serif text-2xl font-bold tracking-widest text-white hover:opacity-80 transition-opacity">BOYU</a>
+    <div class="pointer-events-auto">
+        <a href="#" class="font-serif text-2xl font-bold tracking-widest text-white hover:opacity-80 transition-opacity">BOYU</a>
+    </div>
+    
+    <div class="hidden md:flex gap-10 font-mono text-xs tracking-widest pointer-events-auto items-center text-gray-400">
+        <a href="#about" class="hover:text-white transition-colors">ABOUT</a>
+        <a href="#projects" class="hover:text-white transition-colors">PROJECTS</a>
+        <a href="#blog" class="hover:text-white transition-colors">BLOG</a>
+        
+        <div class="relative group">
+            <button class="hover:text-white transition-colors flex items-center gap-1 py-4">
+                SYSTEM <i class="ri-arrow-down-s-line"></i>
+            </button>
+            
+            <div class="absolute top-full right-0 w-48 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2">
+                <div class="bg-black/80 backdrop-blur-xl border border-white/20 p-4 flex flex-col gap-4 text-dim">
+                    <div class="absolute top-0 left-0 w-2 h-2 border-t border-l border-accent-blue"></div>
+                    <div class="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-accent-blue"></div>
+                    
+                    <a href="#photos" class="hover:text-white hover:pl-2 transition-all block border-b border-white/10 pb-2">
+                        // VISUAL LOGS
+                    </a>
+                    <a href="https://github.com/Booyuu" target="_blank" class="hover:text-white hover:pl-2 transition-all block border-b border-white/10 pb-2">
+                        // REPOSITORY
+                    </a>
+                    <a href="#" class="hover:text-white hover:pl-2 transition-all block">
+                        // RSS FEED
+                    </a>
+                </div>
+            </div>
         </div>
-        <div class="hidden md:flex gap-10 font-mono text-xs tracking-widest pointer-events-auto items-center text-gray-400">
-            <a href="#about" class="hover:text-white transition-colors">ABOUT</a>
-            <a href="#projects" class="hover:text-white transition-colors">PROJECTS</a>
-            <a href="#blog" class="hover:text-white transition-colors">BLOG</a>
-            <a href="#photos" class="hover:text-white transition-colors">PHOTOS</a>
-            <div class="h-4 w-[1px] bg-white/20 mx-2"></div>
-            <a href="login.html" class="hover:text-white transition-colors">LOGIN</a>
-            <a href="#nexus" class="border border-white/30 px-5 py-2 hover:bg-white hover:text-black transition-all">JOIN THE CREW</a>
-        </div>
-    </nav>
+
+        <div class="h-4 w-[1px] bg-white/20 mx-2"></div>
+        
+        <a href="#nexus" class="border border-white/30 px-5 py-2 hover:bg-white hover:text-black transition-all">
+            JOIN CREW
+        </a>
+    </div>
+</nav>
 
     <main>
         
