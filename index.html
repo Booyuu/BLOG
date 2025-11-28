@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOYU | EVENT HORIZON</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Rajdhani:wght@500;700&family=Space+Grotesk:wght@300;500&family=Inter:wght@300;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        bg: '#050505',
+                        'accent': '#EAEAEA',
+                        'dim': '#888888',
+                        'tech-red': '#FF3B30',
+                    },
+                    fontFamily: {
+                        serif: ['"Cinzel"', 'serif'],
+                        ui: ['"Rajdhani"', 'sans-serif'],
+                        mono: ['"Space Grotesk"', 'monospace'],
+                        sans: ['"Inter"', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body { background-color: #020202; color: #EAEAEA; cursor: none; margin: 0; overflow-x: hidden; }
+        ::-webkit-scrollbar { width: 0; } 
+
+        /* 1. 光标 */
+        #cursor-dot { position: fixed; width: 6px; height: 6px; background: #fff; border-radius: 50%; pointer-events: none; z-index: 9999; mix-blend-mode: difference; }
+        #cursor-circle { position: fixed; width: 50px; height: 50px; border: 1px solid rgba(255,255,255,0.3); border-radius: 50%; pointer-events: none; z-index: 9998; transition: transform 0.1s; }
+
+        /* 2. 背景层 (固定不动，贯穿全站) */
+        #canvas-container { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: -1; }
+        #noise-layer { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.05; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='1'/%3E%3C/svg%3E"); }
+        
+        /* 装饰线 (半透明) */
+        .grid-lines { position: fixed; inset: 0; pointer-events: none; z-index: 1; opacity: 0.15; }
+        .line-v { position: absolute; top: 0; bottom: 0; width: 1px; background: rgba(255,255,255,0.1); }
+        .line-h { position: absolute; left: 0; right: 0; height: 1px; background: rgba(255,255,255,0.1); }
+
+        /* 3. 标题 */
+        .mega-title {
+            font-size: 15vw; line-height: 0.8; font-weight: 900; font-family: 'Cinzel', serif;
+            color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.9);
+            letter-spacing: -0.02em; transition: color 0.5s;
+            animation: breathe-glow 5s infinite alternate;
+        }
+        .mega-subtitle {
+            font-family: 'Rajdhani', sans-serif; font-size: 1.5vw; letter-spacing: 1em; text-transform: uppercase; color: #888;
+            margin-top: 2rem; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 1rem; display: inline-block;
+        }
+        @keyframes breathe-glow {
+            0% { filter: drop-shadow(0 0 0px rgba(255,255,255,0)); }
+            100% { filter: drop-shadow(0 0 10px rgba(255,255,255,0.4)); }
+        }
+
+        /* 4. 内容排版 (核心修正：全透明背景) */
+        .content-section {
+            min-height: 100vh; position: relative; z-index: 10;
+            display: flex; align-items: center; padding: 6rem 0;
+            /* 修正：不再使用黑色背景，改为透明 */
+            background: transparent;
+            /* 仅保留极淡的分割线 */
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* 玻璃卡片 (用于承载文字，避免看不清) */
+        .glass-card {
+            background: rgba(0, 0, 0, 0.6); /* 半透明黑 */
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.1); padding: 2rem; transition: all 0.3s;
+        }
+        .glass-card:hover { border-color: rgba(255,255,255,0.4); }
+
+        .data-pill {
+            border: 1px solid rgba(255,255,255,0.3); padding: 6px 16px; font-family: 'Space Grotesk'; font-size: 11px;
+            text-transform: uppercase; letter-spacing: 0.1em; display: inline-flex; align-items: center; gap: 8px; color: #ccc;
+            background: rgba(0,0,0,0.5); /* 胶囊加点背景 */
+        }
+
+        /* 列表项 */
+        .project-item {
+            border-bottom: 1px solid rgba(255,255,255,0.15); padding: 2.5rem 0;
+            display: flex; justify-content: space-between; align-items: center; transition: all 0.3s; cursor: pointer;
+            /* 文字自带背景保护 */
+            text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+        }
+        .project-item:hover { padding-left: 20px; border-color: #fff; }
+        .project-title { font-family: 'Cinzel'; font-size: 2rem; color: #888; transition: color 0.3s; }
+        .project-item:hover .project-title { color: #fff; }
+
+        .btn-astral {
+            border: 1px solid rgba(255,255,255,0.3); padding: 12px 32px; font-family: 'Space Grotesk'; 
+            text-transform: uppercase; letter-spacing: 0.2em; font-size: 12px; transition: all 0.3s;
+            background: rgba(0,0,0,0.5);
+        }
+        .btn-astral:hover { background: #fff; color: #000; }
+
+        /* 文章卡片 (增加背景以防文字看不清) */
+        .blog-card {
+            border: 1px solid rgba(255,255,255,0.1); padding: 2rem;
+            background: rgba(0,0,0,0.4); backdrop-filter: blur(5px);
+            transition: all 0.3s; cursor: pointer; height: 20rem; flex-direction: column; display: flex; justify-content: space-between;
+        }
+        .blog-card:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.3); }
+
+        .reveal-mask { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #020202; z-index: 20; }
+
+        /* Preloader */
+        #preloader {
+            position: fixed; inset: 0; background: #000; z-index: 99999;
+            display: flex; justify-content: center; align-items: center; flex-direction: column;
+        }
+        .loader-text { font-family: 'Space Grotesk'; color: #FF3B30; letter-spacing: 0.2em; font-size: 12px; margin-bottom: 10px; }
+        .loader-bar { width: 200px; height: 1px; background: #333; position: relative; overflow: hidden; }
+        .loader-progress { position: absolute; left: 0; top: 0; height: 100%; width: 0%; background: #fff; }
+    </style>
+</head>
+<body>
+
+    <div id="preloader">
+        <div class="loader-text">INITIALIZING... <span id="loading-percent">0</span>%</div>
+        <div class="loader-bar"><div class="loader-progress"></div></div>
+    </div>
+
+    <div id="cursor-dot"></div>
+    <div id="cursor-circle"></div>
+    <div id="noise-layer"></div>
+
+    <div class="grid-lines">
+        <div class="line-v" style="left: 10%;"></div>
+        <div class="line-v" style="right: 10%;"></div>
+        <div class="line-h" style="top: 10%;"></div>
+        <div class="line-h" style="bottom: 10%;"></div>
+    </div>
+
+    <div id="canvas-container"></div>
+
+    <nav class="fixed top-0 w-full p-8 md:px-12 z-50 flex justify-between items-center mix-blend-difference pointer-events-none">
+        <div class="pointer-events-auto">
+            <a href="#" class="font-serif text-2xl font-bold tracking-widest text-white hover:opacity-80 transition-opacity">BOYU</a>
+        </div>
+        <div class="hidden md:flex gap-10 font-mono text-xs tracking-widest pointer-events-auto items-center text-gray-400">
+            <a href="#about" class="hover:text-white transition-colors">ABOUT</a>
+            <a href="#projects" class="hover:text-white transition-colors">PROJECTS</a>
+            <a href="#blog" class="hover:text-white transition-colors">BLOG</a>
+            <a href="#photos" class="hover:text-white transition-colors">PHOTOS</a>
+            <div class="h-4 w-[1px] bg-white/20 mx-2"></div>
+            <a href="#" class="hover:text-white transition-colors">LOGIN</a>
+            <a href="#" class="border border-white/30 px-5 py-2 hover:bg-white hover:text-black transition-all">SUBSCRIBE</a>
+        </div>
+    </nav>
+
+    <main>
+        
+        <section class="h-screen w-full flex flex-col justify-center items-center relative z-10 pointer-events-none">
+            <div class="text-center space-y-2">
+                <div class="data-pill text-white border-white/40 animate-pulse mb-8">
+                    <span class="w-1.5 h-1.5 bg-white rounded-full"></span>
+                    SYSTEM ACTIVE
+                </div>
+                <h1 class="mega-title pointer-events-auto">BOYU</h1>
+                <div class="mega-subtitle">EVENT HORIZON</div>
+            </div>
+        </section>
+
+        <section class="content-section" id="about">
+            <div class="max-w-6xl mx-auto w-full px-8 grid md:grid-cols-2 gap-24 items-center">
+                <div class="space-y-12" data-aos>
+                    <div class="data-pill">IDENTITY CORE</div>
+                    <h2 class="font-serif text-5xl md:text-7xl leading-none text-white mix-blend-overlay">THE<br>ARCHITECT</h2>
+                    <div class="glass-card">
+                        <p class="font-sans text-gray-300 text-lg leading-relaxed mb-6">
+                            我是 BOYU。站在已知与未知的边界，透过代码与镜头观察世界。
+                        </p>
+                        <p class="font-sans text-gray-400 text-sm leading-relaxed">
+                            在这里，交易是理性的博弈，摄影是感性的定格，而思考是穿越黑洞的引擎。欢迎来到我的视界。
+                        </p>
+                    </div>
+                    <a href="#nexus" class="btn-astral inline-block pointer-events-auto">CONTACT ME</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-section" id="projects">
+            <div class="w-full max-w-6xl mx-auto px-8">
+                <div class="flex items-center justify-between mb-16 border-b border-white/20 pb-6">
+                    <div class="data-pill">PROJECTS</div>
+                    <span class="font-mono text-xs text-dim">SELECTED WORKS</span>
+                </div>
+                <div>
+                    <div class="project-item group">
+                        <div><h3 class="project-title">Project Alpha</h3><p class="font-mono text-xs text-dim mt-2 tracking-widest">WEB3 / DEFI PROTOCOL</p></div>
+                        <i class="ri-arrow-right-up-line text-2xl text-dim group-hover:text-white transition-colors"></i>
+                    </div>
+                    <div class="project-item group">
+                        <div><h3 class="project-title">Neon Engine</h3><p class="font-mono text-xs text-dim mt-2 tracking-widest">WEBGL VISUALIZATION</p></div>
+                        <i class="ri-arrow-right-up-line text-2xl text-dim group-hover:text-white transition-colors"></i>
+                    </div>
+                    <div class="project-item group">
+                        <div><h3 class="project-title">Trading Bot V2</h3><p class="font-mono text-xs text-dim mt-2 tracking-widest">PYTHON / ALGO TRADING</p></div>
+                        <i class="ri-arrow-right-up-line text-2xl text-dim group-hover:text-white transition-colors"></i>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-section" id="blog">
+            <div class="w-full max-w-6xl mx-auto px-8">
+                <div class="flex items-center justify-between mb-24">
+                    <div class="data-pill">TRANSMISSIONS</div>
+                    <a href="#" class="font-mono text-xs text-dim hover:text-white transition-colors tracking-widest pointer-events-auto">READ ALL -></a>
+                </div>
+                <div class="grid md:grid-cols-3 gap-8">
+                    <article class="blog-card group pointer-events-auto">
+                        <div class="font-mono text-xs text-dim">2025.11.28</div>
+                        <div>
+                            <h3 class="font-serif text-2xl text-gray-200 group-hover:text-white transition-colors mb-4 leading-tight">The Future of Algorithmic Art</h3>
+                            <p class="font-sans text-xs text-gray-500 line-clamp-3">探索生成式艺术在现代网页设计中的应用与边界...</p>
+                        </div>
+                        <div class="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center group-hover:border-white transition-colors"><i class="ri-arrow-right-up-line text-dim group-hover:text-white"></i></div>
+                    </article>
+                    <article class="blog-card group pointer-events-auto">
+                        <div class="font-mono text-xs text-dim">2025.10.15</div>
+                        <div>
+                            <h3 class="font-serif text-2xl text-gray-200 group-hover:text-white transition-colors mb-4 leading-tight">Finding Alpha in Bear Markets</h3>
+                            <p class="font-sans text-xs text-gray-500 line-clamp-3">如何在下行周期中保持冷静并寻找获利机会...</p>
+                        </div>
+                        <div class="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center group-hover:border-white transition-colors"><i class="ri-arrow-right-up-line text-dim group-hover:text-white"></i></div>
+                    </article>
+                    <article class="blog-card group pointer-events-auto">
+                        <div class="font-mono text-xs text-dim">2025.09.02</div>
+                        <div>
+                            <h3 class="font-serif text-2xl text-gray-200 group-hover:text-white transition-colors mb-4 leading-tight">A Solo Trip to Iceland</h3>
+                            <p class="font-sans text-xs text-gray-500 line-clamp-3">冰岛环岛骑行记录与摄影集...</p>
+                        </div>
+                        <div class="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center group-hover:border-white transition-colors"><i class="ri-arrow-right-up-line text-dim group-hover:text-white"></i></div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-section" id="photos">
+            <div class="w-full max-w-7xl mx-auto px-8">
+                <div class="text-center mb-24">
+                    <div class="data-pill mb-6">OPTICS</div>
+                    <h2 class="font-serif text-6xl text-white/90">VISUAL LOGS</h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="aspect-[4/5] bg-white/5 relative group overflow-hidden border border-white/10 reveal-img"><div class="reveal-mask"></div>
+                        <img src="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?q=80&w=800" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 opacity-80 group-hover:opacity-100">
+                    </div>
+                    <div class="aspect-[4/5] bg-white/5 relative group overflow-hidden border border-white/10 md:mt-16 reveal-img"><div class="reveal-mask"></div>
+                        <img src="https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=800" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 opacity-80 group-hover:opacity-100">
+                    </div>
+                    <div class="aspect-[4/5] bg-white/5 relative group overflow-hidden border border-white/10 reveal-img"><div class="reveal-mask"></div>
+                        <img src="https://images.unsplash.com/photo-1534067783941-51c67a479958?q=80&w=800" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 opacity-80 group-hover:opacity-100">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-32 px-8 relative z-20 border-t border-white/10 content-section" id="nexus">
+            <div class="max-w-4xl mx-auto text-center space-y-16">
+                <div class="space-y-6">
+                    <h3 class="font-serif text-2xl text-white">SUPPORT THE TRANSMISSION</h3>
+                    <a href="#" class="btn-astral inline-block border-tech-red text-tech-red hover:bg-tech-red hover:text-white pointer-events-auto">
+                        <i class="ri-cup-line mr-2"></i> SPONSOR ME
+                    </a>
+                </div>
+                <div class="grid md:grid-cols-3 gap-8 font-mono text-xs tracking-widest pt-12 border-t border-white/10">
+                    <div class="flex flex-col gap-4 text-dim">
+                        <a href="#" class="hover:text-white transition-colors pointer-events-auto">TWITTER / X</a>
+                        <a href="#" class="hover:text-white transition-colors pointer-events-auto">LINKEDIN</a>
+                        <a href="#" class="hover:text-white transition-colors pointer-events-auto">TELEGRAM</a>
+                    </div>
+                    <div><a href="mailto:boyu@astral.net" class="text-white hover:text-gray-400 transition-colors pointer-events-auto">BOYU@ASTRAL.NET</a></div>
+                    <div class="text-dim">SINGAPORE / EARTH</div>
+                </div>
+                <div class="pt-8">
+                    <h2 class="font-serif text-[12vw] leading-none text-white/10 select-none">BOYU</h2>
+                    <p class="font-mono text-[10px] text-dim mt-8">© 2025 ALL RIGHTS RESERVED.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // === 加载逻辑 ===
+        const preloader = document.getElementById('preloader');
+        const progressBar = document.querySelector('.loader-progress');
+        const percentText = document.getElementById('loading-percent');
+        let progress = 0;
+        const interval = setInterval(() => {
+            progress += Math.random() * 5; if (progress > 100) progress = 100;
+            progressBar.style.width = `${progress}%`; percentText.innerText = Math.floor(progress);
+            if (progress === 100) {
+                clearInterval(interval);
+                gsap.to(preloader, { opacity: 0, duration: 1, ease: "power2.inOut", onComplete: () => preloader.style.display = 'none' });
+                gsap.from(".mega-title", { y: 100, opacity: 0, duration: 1.5, delay: 0.5, ease: "power3.out" });
+                gsap.from(".mega-subtitle", { y: 20, opacity: 0, duration: 1.5, delay: 0.8, ease: "power3.out" });
+            }
+        }, 30);
+
+        gsap.registerPlugin(ScrollTrigger);
+        
+        const cursor = document.getElementById('cursor-dot'), ring = document.getElementById('cursor-circle');
+        window.addEventListener('mousemove', e => {
+            gsap.to(cursor, {x: e.clientX-3, y: e.clientY-3, duration: 0});
+            gsap.to(ring, {x: e.clientX-25, y: e.clientY-25, duration: 0.15});
+        });
+        document.querySelectorAll('a, .project-item, article, img, .btn-astral').forEach(el => {
+            el.addEventListener('mouseenter', () => gsap.to(ring, {scale: 1.5, borderColor: '#fff', backgroundColor:'rgba(255,255,255,0.1)'}));
+            el.addEventListener('mouseleave', () => gsap.to(ring, {scale: 1, borderColor: 'rgba(255,255,255,0.3)', backgroundColor:'transparent'}));
+        });
+
+        // === Three.js 星海 (全站贯穿) ===
+        const scene = new THREE.Scene();
+        // 关键：极淡的雾，让远处星星慢慢淡出，而不是突然切断
+        scene.fog = new THREE.FogExp2(0x000000, 0.0005); 
+
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 3000);
+        camera.position.z = 100;
+
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+        const geometry = new THREE.BufferGeometry();
+        // 增加粒子数量到 6000，铺满全站
+        const count = 6000;
+        const positions = new Float32Array(count * 3);
+        for(let i=0; i<count*3; i+=3) {
+            // 范围扩大 (x, y, z)
+            positions[i] = (Math.random() - 0.5) * 1500;
+            positions[i+1] = (Math.random() - 0.5) * 1500;
+            // Z轴深度拉大，制造纵深感
+            positions[i+2] = (Math.random() - 0.5) * 2000; 
+        }
+        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        
+        // 粒子大小调整适中
+        const material = new THREE.PointsMaterial({ size: 1.2, color: 0xffffff, transparent: true, opacity: 0.8 });
+        const starField = new THREE.Points(geometry, material);
+        scene.add(starField);
+
+        let mouseX = 0, mouseY = 0;
+        window.addEventListener('mousemove', e => {
+            mouseX = (e.clientX - window.innerWidth/2) * 0.05;
+            mouseY = (e.clientY - window.innerHeight/2) * 0.05;
+        });
+
+        function animate() {
+            // 整体缓慢旋转
+            starField.rotation.y += 0.0002;
+            starField.rotation.x += 0.0001;
+
+            // 视差
+            camera.position.x += (mouseX - camera.position.x) * 0.05;
+            camera.position.y += (-mouseY - camera.position.y) * 0.05;
+            
+            // 核心：根据滚动距离推进摄像机 (飞行感)
+            // 滚动越多，飞得越远，星星一直在
+            const scrollY = window.scrollY;
+            camera.position.z = 100 - (scrollY * 0.1); 
+
+            camera.lookAt(scene.position);
+            renderer.render(scene, camera);
+            requestAnimationFrame(animate);
+        }
+        animate();
+        
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth/window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // GSAP
+        gsap.to(".mega-title", {
+            scrollTrigger: { trigger: "#hero", start: "top top", end: "bottom top", scrub: 1 },
+            y: -150, opacity: 0
+        });
+        gsap.utils.toArray('.reveal-mask').forEach(mask => {
+            gsap.to(mask, {
+                height: 0, duration: 1.5, ease: "power4.inOut",
+                scrollTrigger: { trigger: mask.parentElement, start: "top 80%" }
+            });
+        });
+
+        const lenis = new Lenis({ duration: 1.5, smooth: true });
+        function raf(time) { lenis.raf(time); requestAnimationFrame(raf); } requestAnimationFrame(raf);
+    </script>
+</body>
+</html>
