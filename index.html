@@ -357,13 +357,14 @@
 
         <div
             class="hidden md:flex gap-10 font-mono text-xs tracking-widest pointer-events-auto items-center text-gray-400">
-            <a href="#about" class="hover:text-white transition-colors">ABOUT</a>
-            <a href="#projects" class="hover:text-white transition-colors">PROJECTS</a>
-            <a href="blog.html" class="hover:text-white transition-colors">BLOG</a>
+            <a href="#about" class="hover:text-white transition-colors" data-i18n="nav.about">ABOUT</a>
+            <a href="#projects" class="hover:text-white transition-colors" data-i18n="nav.projects">PROJECTS</a>
+            <a href="blog.html" class="hover:text-white transition-colors" data-i18n="nav.blog">BLOG</a>
 
             <div class="relative group">
                 <button class="hover:text-white transition-colors flex items-center gap-1 py-4">
-                    SYSTEM <i class="ri-arrow-down-s-line"></i>
+                    <span data-i18n="nav.system">SYSTEM</span>
+                    <i class="ri-arrow-down-s-line"></i>
                 </button>
 
                 <div
@@ -372,15 +373,15 @@
                         <div class="absolute top-0 left-0 w-2 h-2 border-t border-l border-accent-blue"></div>
                         <div class="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-accent-blue"></div>
 
-                        <a href="photos.html"
+                        <a href="photos.html" data-i18n="nav.sys.visuals"
                             class="hover:text-white hover:pl-2 transition-all block border-b border-white/10 pb-2">
                             // VISUAL LOGS
                         </a>
-                        <a href="https://github.com/Booyuu" target="_blank"
+                        <a href="https://github.com/Booyuu" target="_blank" data-i18n="nav.sys.repo"
                             class="hover:text-white hover:pl-2 transition-all block border-b border-white/10 pb-2">
                             // REPOSITORY
                         </a>
-                        <a href="#" class="hover:text-white hover:pl-2 transition-all block">
+                        <a href="#" class="hover:text-white hover:pl-2 transition-all block" data-i18n="nav.sys.rss">
                             // RSS FEED
                         </a>
                     </div>
@@ -389,9 +390,16 @@
 
             <div class="h-4 w-[1px] bg-white/20 mx-2"></div>
 
-            <a href="#nexus" class="border border-white/30 px-5 py-2 hover:bg-white hover:text-black transition-all">
+            <a href="#nexus" data-i18n="nav.join"
+                class="border border-white/30 px-5 py-2 hover:bg-white hover:text-black transition-all">
                 JOIN CREW
             </a>
+            <div class="pointer-events-auto font-mono text-xs tracking-widest cursor-pointer ml-8 flex gap-1"
+                onclick="toggleLanguage()">
+                <span id="lang-en" class="text-white font-bold">EN</span>
+                <span class="text-dim">/</span>
+                <span id="lang-zh" class="text-dim hover:text-white transition-colors">CN</span>
+            </div>
         </div>
     </nav>
 
@@ -415,18 +423,17 @@
                     <h2 class="font-serif text-5xl md:text-7xl leading-none text-white mix-blend-overlay">
                         THE<br>ARCHITECT</h2>
                     <div class="glass-card">
-                        <p class="font-sans text-gray-300 text-lg leading-relaxed mb-6">
-                            我是 BOYU。
-                            一名<strong>交易员</strong>与<strong>世界探索者</strong>。
+                        <p class="font-sans text-gray-300 text-lg leading-relaxed mb-6" data-i18n="about.intro">
+                            我是 BOYU。一名<strong>交易员</strong>与<strong>世界探索者</strong>。
                         </p>
 
-                        <p class="font-sans text-gray-400 text-sm leading-relaxed">
-                            致力于构建一个可信的数字世界(Ethicraft)和一个更可靠的自己。
+                        <p class="font-sans text-gray-400 text-sm leading-relaxed" data-i18n="about.desc">
+                            致力于构建一个可信的数字世界 (Ethicraft) 和一个更可靠的自己。
                             <br><br>
-                            K
-                            线的涨跌之外，我沉浸于<strong>挪威</strong>的峡湾、Ólafur Arnald的音乐,以及幸福的二人世界。这个站点不是代码仓库,而是记录财富逻辑与生活美学的航海日志。
+                            在 K 线的涨跌之外，我沉浸于<strong>挪威</strong>的峡湾、Ólafur Arnalds
+                            的音乐，以及幸福的二人世界。这个站点不是代码仓库，而是记录财富逻辑与生活美学的航海日志。
                             <br><br>
-                            记录所有思考、失败、顿悟和成长, 学习如何在混沌里找到方向。
+                            记录所有思考、失败、顿悟和成长，学习如何在混沌里找到方向。
                         </p>
 
                         <div class="mt-8 pt-6 border-t border-white/10">
@@ -447,12 +454,13 @@
                             <div
                                 class="mt-2 flex items-center gap-2 text-[10px] text-dim font-mono tracking-wider pl-1 md:pl-[145px]">
                                 <i class="ri-corner-down-right-line text-accent-blue/60"></i>
-                                <span>永久免费的 Web3 学习与考试认证网站</span>
+                                <span data-i18n="proj.ethicraft.desc">永久免费的 Web3 学习与考试认证平台</span>
                             </div>
                         </div>
                     </div>
-                    <a href="#nexus" class="btn-astral inline-block pointer-events-auto mt-8">CONTACT ME</a>
                 </div>
+                <a href="#nexus" class="btn-astral inline-block pointer-events-auto mt-8">CONTACT ME</a>
+            </div>
             </div>
         </section>
 
@@ -791,6 +799,92 @@
         const lenis = new Lenis({ duration: 1.5, smooth: true });
         function raf(time) { lenis.raf(time); requestAnimationFrame(raf); } requestAnimationFrame(raf);
     </script>
+
+    const translations = {
+    "en": {
+    "nav.about": "ABOUT",
+    "nav.projects": "PROJECTS",
+    "nav.blog": "BLOG",
+    "nav.system": "SYSTEM",
+    "nav.sys.visuals": "// VISUAL LOGS",
+    "nav.sys.repo": "// REPOSITORY",
+    "nav.sys.rss": "// RSS FEED",
+    "nav.join": "JOIN CREW",
+    "about.intro": "I am BOYU. Founder of <strong>Ethicraft</strong>, a pure price-action trader and a world explorer.",
+    "about.desc": "My journey relies not on cold algorithms, but on the primal rhythm of <strong>Price Action</strong>
+    and the honing of mindset.<br><br>Beyond the charts, I immerse myself in the Icelandic wilderness, music
+    frequencies, and the essence of business. This site is my log of wealth logic and life aesthetics.",
+    "btn.contact": "CONTACT ME",
+    "proj.ethicraft.desc": "A permanently free Web3 learning and certification platform.",
+    "proj.pa.desc": "Naked K-line trading system and psychology notes.",
+    "proj.iceland.desc": "Visual records of solitude, wastelands, and auroras.",
+    "blog.readall": "READ ALL ->",
+    "optics.enter": "ENTER GALLERY",
+    "nexus.title": "REGISTER TO NEURAL LINK",
+    "nexus.desc": "Register as an observer of the [BOYU] node. Receive the latest trading strategies and interstellar
+    visuals first.",
+    "btn.activate": "ACTIVATE ACCOUNT",
+    "nexus.fuel": "FUEL THE SHIP",
+    "btn.sponsor": "SPONSOR ME"
+    },
+    "zh": {
+    "nav.about": "关于",
+    "nav.projects": "项目",
+    "nav.blog": "博客",
+    "nav.system": "系统",
+    "nav.sys.visuals": "// 影像日志",
+    "nav.sys.repo": "// 代码仓库",
+    "nav.sys.rss": "// RSS 订阅",
+    "nav.join": "加入舰队",
+    "about.intro": "我是 BOYU。<strong>Ethicraft</strong> 创始人，一名拒绝算法噪音的<strong>纯粹交易者</strong>与<strong>世界探索者</strong>。",
+    "about.desc": "我的航行不依赖冰冷的代码，而是信奉<strong>价格行为 (Price Action)</strong> 的原始韵律与<strong>交易心态</strong>的磨砺。<br><br>在 K
+    线的涨跌之外，我沉浸于<strong>冰岛</strong>的荒原、<strong>音乐</strong>的频率以及商业世界的本质。这个站点不是代码仓库，而是我记录财富逻辑与生活美学的航海日志。",
+    "btn.contact": "联系我",
+    "proj.ethicraft.desc": "永久免费的 Web3 学习与考试认证平台。",
+    "proj.pa.desc": "裸K交易系统与心态磨砺笔记。",
+    "proj.iceland.desc": "关于孤独、荒原与极光的影像记录。",
+    "blog.readall": "查看全部 ->",
+    "optics.enter": "进入画廊",
+    "nexus.title": "注册神经网络链接",
+    "nexus.desc": "注册成为 [BOYU] 节点的观察者。第一时间接收最新的交易策略与星际影像。",
+    "btn.activate": "激活账号",
+    "nexus.fuel": "为飞船注能",
+    "btn.sponsor": "赞助我"
+    }
+    };
+
+    // 语言切换逻辑
+    let currentLang = localStorage.getItem('site-lang') || 'en';
+
+    function toggleLanguage() {
+    currentLang = currentLang === 'en' ? 'zh' : 'en';
+    localStorage.setItem('site-lang', currentLang);
+    updateContent();
+    }
+
+    function updateContent() {
+    const btnEn = document.getElementById('lang-en');
+    const btnZh = document.getElementById('lang-zh');
+    if(btnEn && btnZh) {
+    if (currentLang === 'en') {
+    btnEn.className = 'text-white font-bold transition-colors';
+    btnZh.className = 'text-dim hover:text-white transition-colors';
+    } else {
+    btnEn.className = 'text-dim hover:text-white transition-colors';
+    btnZh.className = 'text-white font-bold transition-colors';
+    }
+    }
+
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (translations[currentLang][key]) {
+    el.innerHTML = translations[currentLang][key];
+    }
+    });
+    }
+
+    // 初始化
+    updateContent();
 </body>
 
 </html>
