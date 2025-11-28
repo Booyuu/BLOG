@@ -14,17 +14,26 @@
         body { background-color: #020202; color: #EAEAEA; font-family: 'Inter', sans-serif; }
         ::-webkit-scrollbar { width: 0; }
 
-        /* 星空背景 */
-        #bg-layer {
-            position: fixed; inset: 0; z-index: -1; background: #050505;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E");
+        /* === 1. 新背景设定 (挪威极光/星空) === */
+        #bg-image {
+            position: fixed; inset: 0; z-index: -2;
+            /* 这里换了一张Unsplash上的挪威极光大片 */
+            background-image: url('https://images.unsplash.com/photo-1529963183134-61a90db47e27?q=80&w=2000');
+            background-size: cover;
+            background-position: center;
+        }
+        /* 背景遮罩层 (让背景变暗，突出文字) */
+        #bg-overlay {
+            position: fixed; inset: 0; z-index: -1;
+            background: rgba(0,0,0,0.7); /* 调节最后的 0.7 可以改变背景亮度 */
+            backdrop-filter: blur(3px); /* 轻微模糊背景增加深邃感 */
         }
 
         /* 筛选按钮样式 */
         .filter-btn {
             border: 1px solid rgba(255,255,255,0.2); padding: 8px 20px; 
             font-family: 'Space Grotesk'; font-size: 12px; letter-spacing: 0.1em; cursor: pointer;
-            transition: all 0.3s; text-transform: uppercase;
+            transition: all 0.3s; text-transform: uppercase; background: rgba(0,0,0,0.3);
         }
         .filter-btn:hover, .filter-btn.active {
             background: #fff; color: #000; border-color: #fff;
@@ -49,7 +58,8 @@
 </head>
 <body>
 
-    <div id="bg-layer"></div>
+    <div id="bg-image"></div>
+    <div id="bg-overlay"></div>
 
     <nav class="fixed top-0 w-full p-8 z-50 flex justify-between items-center mix-blend-difference">
         <a href="index.html" class="font-mono text-xs tracking-widest hover:text-white text-gray-400 transition-colors">
@@ -61,8 +71,8 @@
     <main class="max-w-[1400px] mx-auto px-6 pt-32 pb-20">
         
         <div class="text-center mb-16 space-y-4">
-            <h1 class="font-serif text-5xl md:text-7xl text-white">WORLD ARCHIVE</h1>
-            <p class="font-sans text-gray-400 max-w-xl mx-auto text-sm">
+            <h1 class="font-serif text-5xl md:text-7xl text-white drop-shadow-lg">WORLD ARCHIVE</h1>
+            <p class="font-sans text-gray-300 max-w-xl mx-auto text-sm drop-shadow">
                 用镜头丈量世界的维度。从热带的钢铁森林，到极地的冰原荒野。
             </p>
         </div>
@@ -76,7 +86,7 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="gallery-grid">
             
-            <div class="travel-card aspect-[4/5]" data-category="iceland">
+            <div class="travel-card aspect-square" data-category="iceland">
                 <img src="https://images.unsplash.com/photo-1476610182048-b716b8518aae?q=80&w=800">
                 <div class="card-info">
                     <div class="text-xs font-mono text-red-400 mb-1">ICELAND</div>
@@ -85,7 +95,7 @@
                 </div>
             </div>
 
-            <div class="travel-card aspect-[4/5]" data-category="singapore">
+            <div class="travel-card aspect-square" data-category="singapore">
                 <img src="https://images.unsplash.com/photo-1525625293386-3f8f99389edd?q=80&w=800">
                 <div class="card-info">
                     <div class="text-xs font-mono text-blue-400 mb-1">SINGAPORE</div>
@@ -94,7 +104,7 @@
                 </div>
             </div>
 
-            <div class="travel-card aspect-[4/5]" data-category="china">
+            <div class="travel-card aspect-square" data-category="china">
                 <img src="https://images.unsplash.com/photo-1508804185872-d7badad00f7d?q=80&w=800">
                 <div class="card-info">
                     <div class="text-xs font-mono text-yellow-400 mb-1">CHINA</div>
@@ -103,7 +113,7 @@
                 </div>
             </div>
 
-            <div class="travel-card aspect-[4/5]" data-category="iceland">
+            <div class="travel-card aspect-square" data-category="iceland">
                 <img src="https://images.unsplash.com/photo-1531366936337-7c912a4589a7?q=80&w=800">
                 <div class="card-info">
                     <div class="text-xs font-mono text-red-400 mb-1">ICELAND</div>
@@ -111,8 +121,24 @@
                     <p class="text-[10px] text-gray-400 mt-2">维克黑沙滩的浪潮。</p>
                 </div>
             </div>
-
+             <div class="travel-card aspect-square" data-category="china">
+                <img src="https://images.unsplash.com/photo-1508804055860-41903a954405?q=80&w=800">
+                <div class="card-info">
+                    <div class="text-xs font-mono text-yellow-400 mb-1">CHINA</div>
+                    <h3 class="font-serif text-xl text-white">GREAT WALL</h3>
+                    <p class="text-[10px] text-gray-400 mt-2">蜿蜒在山脊的历史。</p>
+                </div>
             </div>
+            <div class="travel-card aspect-square" data-category="singapore">
+                <img src="https://images.unsplash.com/photo-1565265491739-335194002c6a?q=80&w=800">
+                <div class="card-info">
+                    <div class="text-xs font-mono text-blue-400 mb-1">SINGAPORE</div>
+                    <h3 class="font-serif text-xl text-white">MARINA BAY</h3>
+                    <p class="text-[10px] text-gray-400 mt-2">热带的摩登天际线。</p>
+                </div>
+            </div>
+
+        </div>
     </main>
 
     <script>
@@ -128,12 +154,12 @@
 
                 const filterValue = btn.getAttribute('data-filter');
 
-                // 2. 筛选卡片
+                // 2. 筛选卡片 (使用 GSAP 动画)
                 cards.forEach(card => {
                     if (filterValue === 'all' || card.getAttribute('data-category') === filterValue) {
-                        gsap.to(card, { display: 'block', opacity: 1, scale: 1, duration: 0.5 });
+                        gsap.to(card, { display: 'block', opacity: 1, scale: 1, duration: 0.5, ease: "power2.out" });
                     } else {
-                        gsap.to(card, { opacity: 0, scale: 0.8, duration: 0.3, onComplete: () => {
+                        gsap.to(card, { opacity: 0, scale: 0.8, duration: 0.3, ease: "power2.in", onComplete: () => {
                             card.style.display = 'none';
                         }});
                     }
@@ -142,7 +168,8 @@
         });
 
         // 入场动画
-        gsap.from(".travel-card", { y: 50, opacity: 0, duration: 0.8, stagger: 0.1 });
+        gsap.from(".travel-card", { y: 50, opacity: 0, duration: 0.8, stagger: 0.1, ease: "power2.out", delay: 0.2 });
+        gsap.from("h1, p", { y: 30, opacity: 0, duration: 1, stagger: 0.2, ease: "power2.out" });
     </script>
 
 </body>
