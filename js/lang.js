@@ -26,7 +26,7 @@ const translations = {
         "btn.activate": "ACTIVATE ACCOUNT", "nexus.fuel": "FUEL THE SHIP", "btn.sponsor": "SPONSOR ME",
         "search.placeholder": "SEARCH LOGS (KEYWORD / YYYY.MM.DD)...",
         "search.noresults": "// NO DATA FOUND IN SECTOR",
-        "nav.back": "← BACK TO TERMINAL",
+        "nav.back": "BACK TO TERMINAL",
 
         // --- [子页面 Travel/Media/Post] ---
         "world.title": "WORLD ARCHIVE", "world.desc": "Measuring the dimensions of the world with a lens. From tropical steel forests to polar ice wastelands.",
