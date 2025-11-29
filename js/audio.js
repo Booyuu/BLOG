@@ -1,7 +1,7 @@
 // === BOYU | 星际音频核心 V7.1 (智能续播增强版) ===
 
 document.addEventListener("DOMContentLoaded", () => {
-    
+
     // 1. 智能路径修正
     const path = window.location.pathname;
     // 只要路径里包含这些文件夹名，就认为是子页面
@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const progressContainer = document.getElementById('progress-container');
     const progressBar = document.getElementById('progress-bar');
     const playlistContainer = document.getElementById('playlist-container');
-    
+
     if (!audio) return;
 
     let currentTrackIndex = 0;
@@ -35,53 +35,60 @@ document.addEventListener("DOMContentLoaded", () => {
     // ==============================
     // 🧠 记忆核心 (Memory Core)
     // ==============================
-    
+
+    // ==============================
+    // 🧠 记忆核心 (Memory Core)
+    // ==============================
+
     function initAudioState() {
         const savedIndex = localStorage.getItem('audio_index');
         const savedTime = localStorage.getItem('audio_time');
-        // 只有当由页面跳转导致刷新时，我们才认为应该自动续播
-        // 为了简单，我们这里假设只要上次是播放状态，回来就尝试续播
-        const wasPlaying = localStorage.getItem('audio_playing') === 'true';
+
+        // 🔴 修改重点：不再检查 'audio_playing' 状态
+        // 只要有播放记录 (savedIndex 存在)，我们就默认用户希望继续听
+        // 这样刷新、后退、前进，音乐都会顽强地接上
+        const shouldResume = savedIndex !== null;
 
         if (savedIndex !== null) {
             currentTrackIndex = parseInt(savedIndex);
             audio.src = pathPrefix + playlist[currentTrackIndex].src;
-            
-            // 恢复进度 (稍微回退 0.1秒以平滑衔接)
+
+            // 精准恢复进度
             const restoreTime = parseFloat(savedTime || 0);
-            if(restoreTime > 0) audio.currentTime = restoreTime;
+            if (restoreTime > 0) audio.currentTime = restoreTime;
         } else {
+            // 第一次访问，加载第一首但不自动播(避免打扰)，或者你想自动播也可以把这里设为 true
             audio.src = pathPrefix + playlist[0].src;
         }
 
         renderPlaylist();
 
-        // 智能续播逻辑
-        if (wasPlaying) {
-            // 先把 UI 设置为播放状态 (制造视觉上的无缝感)
+        // 强制续播逻辑
+        if (shouldResume) {
+            // 1. UI 先变亮 (给用户反馈)
             updateUIState(true);
-            
-            // 尝试自动播放
+
+            // 2. 尝试播放
             const playPromise = audio.play();
 
             if (playPromise !== undefined) {
                 playPromise.catch(error => {
-                    console.log("自动播放被拦截，等待用户交互...");
-                    // 如果被拦截，我们不仅不把 UI 变回暂停，反而保持播放 UI
-                    // 并添加一个一次性的全局点击监听，用户点哪里都能恢复声音
+                    // 3. 如果被浏览器拦截 (常见于刷新后)，挂载全域监听
+                    console.log("Auto-resume blocked. Waiting for interaction...");
+
                     const resumeAudio = () => {
                         audio.play();
-                        document.removeEventListener('click', resumeAudio);
-                        document.removeEventListener('keydown', resumeAudio);
-                        document.removeEventListener('scroll', resumeAudio);
-                        document.removeEventListener('touchstart', resumeAudio);
+                        updateUIState(true);
+                        // 只要触发一次就销毁监听，省资源
+                        ['click', 'keydown', 'scroll', 'touchstart'].forEach(e =>
+                            document.removeEventListener(e, resumeAudio)
+                        );
                     };
-                    
-                    // 只要用户动一下，声音就回来
-                    document.addEventListener('click', resumeAudio);
-                    document.addEventListener('keydown', resumeAudio);
-                    document.addEventListener('scroll', resumeAudio);
-                    document.addEventListener('touchstart', resumeAudio);
+
+                    // 只要用户动一下鼠标或滚轮，声音立马出来
+                    ['click', 'keydown', 'scroll', 'touchstart'].forEach(e =>
+                        document.addEventListener(e, resumeAudio)
+                    );
                 });
             }
         } else {
@@ -103,7 +110,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // ==============================
 
     function renderPlaylist() {
-        if(!playlistContainer) return;
+        if (!playlistContainer) return;
         playlistContainer.innerHTML = '';
         playlist.forEach((track, index) => {
             const div = document.createElement('div');
@@ -125,7 +132,7 @@ document.addEventListener("DOMContentLoaded", () => {
         updateListHighlight();
     }
 
-    window.toggleMainPlayback = function() {
+    window.toggleMainPlayback = function () {
         if (audio.paused) {
             if (!audio.src || audio.src === window.location.href) {
                 audio.src = pathPrefix + playlist[currentTrackIndex].src;
@@ -137,7 +144,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
-    window.playTrack = function(index) {
+    window.playTrack = function (index) {
         if (currentTrackIndex === index && !audio.paused) {
             audio.pause(); updateUIState(false);
         } else {
@@ -149,17 +156,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function updateUIState(isPlaying) {
         const track = playlist[currentTrackIndex];
-        
-        if(trackNameDisplay) {
+
+        if (trackNameDisplay) {
             trackNameDisplay.innerHTML = isPlaying ? `<span class="text-accent-blue">PLAYING:</span> ${track.title.toUpperCase()}` : "AUDIO PAUSED";
         }
-        
-        if(masterWave) {
-            if(isPlaying) {
+
+        if (masterWave) {
+            if (isPlaying) {
                 masterWave.classList.add('playing');
                 // 注入波形动画 HTML (如果之前没有的话)
-                if(!masterWave.querySelector('.animate-\\[sound-wave_0\\.8s_infinite_alternate\\]')) {
-                     masterWave.innerHTML = `
+                if (!masterWave.querySelector('.animate-\\[sound-wave_0\\.8s_infinite_alternate\\]')) {
+                    masterWave.innerHTML = `
                         <div class="wave-bar w-[2px] h-1 bg-accent-blue animate-[sound-wave_0.8s_infinite_alternate]"></div>
                         <div class="wave-bar w-[2px] h-2 bg-accent-blue animate-[sound-wave_0.8s_infinite_alternate_0.1s]"></div>
                         <div class="wave-bar w-[2px] h-1.5 bg-accent-blue animate-[sound-wave_0.8s_infinite_alternate_0.2s]"></div>
@@ -174,9 +181,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     <div class="wave-bar w-[2px] h-3 bg-white"></div>`;
             }
         }
-        
-        if(timeDisplay && isPlaying) timeDisplay.classList.remove('hidden');
-        if(progressContainer && isPlaying) progressContainer.classList.remove('hidden');
+
+        if (timeDisplay && isPlaying) timeDisplay.classList.remove('hidden');
+        if (progressContainer && isPlaying) progressContainer.classList.remove('hidden');
 
         updateListHighlight(isPlaying);
     }
@@ -186,20 +193,20 @@ document.addEventListener("DOMContentLoaded", () => {
             const title = item.querySelector('.track-title');
             const iconBox = item.querySelector('.icon-box');
             const icon = item.querySelector('.track-icon');
-            
+
             if (index === currentTrackIndex) {
                 title?.classList.add('text-accent-blue');
                 iconBox?.classList.remove('opacity-0'); iconBox?.classList.add('opacity-100');
-                if(icon) icon.className = isPlaying ? 'ri-pause-fill track-icon text-lg' : 'ri-play-fill track-icon text-lg';
+                if (icon) icon.className = isPlaying ? 'ri-pause-fill track-icon text-lg' : 'ri-play-fill track-icon text-lg';
             } else {
                 title?.classList.remove('text-accent-blue');
                 iconBox?.classList.remove('opacity-100'); iconBox?.classList.add('opacity-0');
-                if(icon) icon.className = 'ri-play-fill track-icon text-lg';
+                if (icon) icon.className = 'ri-play-fill track-icon text-lg';
             }
         });
     }
 
-    function formatTime(s) { return isNaN(s) ? "0:00" : Math.floor(s/60) + ":" + (Math.floor(s%60)<10?'0':'') + Math.floor(s%60); }
+    function formatTime(s) { return isNaN(s) ? "0:00" : Math.floor(s / 60) + ":" + (Math.floor(s % 60) < 10 ? '0' : '') + Math.floor(s % 60); }
 
     audio.addEventListener('timeupdate', () => {
         if (!isDragging && progressBar) {
@@ -209,10 +216,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    if(progressContainer) {
+    if (progressContainer) {
         progressContainer.addEventListener('mousedown', (e) => { e.stopPropagation(); isDragging = true; });
-        progressContainer.addEventListener('click', (e) => { 
-            e.stopPropagation(); 
+        progressContainer.addEventListener('click', (e) => {
+            e.stopPropagation();
             const rect = progressContainer.getBoundingClientRect();
             audio.currentTime = ((e.clientX - rect.left) / rect.width) * audio.duration;
         });
@@ -223,8 +230,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 progressBar.style.width = `${percent * 100}%`;
             }
         });
-        document.addEventListener('mouseup', (e) => { 
-            if(isDragging) {
+        document.addEventListener('mouseup', (e) => {
+            if (isDragging) {
                 isDragging = false;
                 const rect = progressContainer.getBoundingClientRect();
                 audio.currentTime = ((e.clientX - rect.left) / rect.width) * audio.duration;
