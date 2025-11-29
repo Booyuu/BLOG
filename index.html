@@ -1085,29 +1085,6 @@
         const lenis = new Lenis({ duration: 1.5, smooth: true });
         function raf(time) { lenis.raf(time); requestAnimationFrame(raf); } requestAnimationFrame(raf);
 
-        // === F. Formspree 表单逻辑 (补回) ===
-        const form = document.getElementById("contact-form"); // 确保 HTML 中 form id="contact-form"
-        if (form) {
-            form.addEventListener("submit", async (e) => {
-                e.preventDefault();
-                const status = document.getElementById("form-status");
-                if (status) { status.classList.remove("hidden"); status.innerText = "TRANSMITTING..."; }
-
-                fetch(e.target.action, {
-                    method: form.method,
-                    body: new FormData(e.target),
-                    headers: { 'Accept': 'application/json' }
-                }).then(response => {
-                    if (response.ok) {
-                        window.location.href = "email_success.html";
-                    } else {
-                        if (status) { status.innerText = "TRANSMISSION FAILED."; status.classList.add("text-red-500"); }
-                    }
-                }).catch(error => {
-                    if (status) { status.innerText = "NETWORK ERROR."; status.classList.add("text-red-500"); }
-                });
-            });
-        }
     </script>
 </body>
 
