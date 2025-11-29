@@ -656,14 +656,50 @@
                     <div class="border border-white/20 p-8 bg-black/50 backdrop-blur-md max-w-md mx-auto mt-8 relative">
                         <div class="absolute top-0 left-0 w-2 h-2 border-t border-l border-accent-blue"></div>
                         <div class="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-accent-blue"></div>
-                        <form action="https://formspree.io/f/xangajoy" method="POST" class="flex flex-col gap-6">
-                            <input type="hidden" name="_next" value="https://booyuu.github.io/email_success.html">
+                        <form id="ajax-form" action="https://formspree.io/f/xangajoy" method="POST"
+                            class="flex flex-col gap-6">
+
                             <input type="email" name="email" placeholder="ENTER YOUR EMAIL IDENTITY" required
                                 class="bg-transparent border-b border-white/30 py-2 text-white font-mono text-sm outline-none focus:border-accent-blue transition-colors placeholder-gray-600 text-center w-full">
+
                             <button type="submit"
-                                class="btn-astral text-center w-full hover:border-accent-blue hover:text-accent-blue pointer-events-auto"
-                                data-i18n="btn.activate">ACTIVATE ACCOUNT</button>
+                                class="btn-astral text-center w-full hover:border-accent-blue hover:text-accent-blue pointer-events-auto">
+                                ACTIVATE ACCOUNT
+                            </button>
+
+                            <p id="form-status" class="text-xs text-center font-mono hidden"></p>
                         </form>
+
+                        <script>
+                            var form = document.getElementById("ajax-form");
+
+                            async function handleSubmit(event) {
+                                event.preventDefault(); // 1. 拦住默认提交
+                                var status = document.getElementById("form-status");
+                                var data = new FormData(event.target);
+
+                                // 2. 用 JS 偷偷发送数据
+                                fetch(event.target.action, {
+                                    method: form.method,
+                                    body: data,
+                                    headers: { 'Accept': 'application/json' }
+                                }).then(response => {
+                                    if (response.ok) {
+                                        // 3. 发送成功？立刻强制跳转！
+                                        window.location.href = "email_success.html";
+                                    } else {
+                                        status.innerHTML = "Error sending message.";
+                                        status.classList.remove("hidden");
+                                        status.classList.add("text-red-500");
+                                    }
+                                }).catch(error => {
+                                    status.innerHTML = "Network Error.";
+                                    status.classList.remove("hidden");
+                                    status.classList.add("text-red-500");
+                                });
+                            }
+                            form.addEventListener("submit", handleSubmit);
+                        </script>
                     </div>
                 </div>
 
