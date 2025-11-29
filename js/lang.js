@@ -61,11 +61,11 @@ const translations = {
         // --- [子页面 Travel/Media/Post] ---
         "world.title": "世界档案", "world.desc": "用镜头丈量世界的维度。从热带的钢铁森林，到极地的冰原荒野。",
         "filter.all": "全部 // ALL", "filter.sg": "新加坡 // SINGAPORE", "filter.cn": "中国 // CHINA", "filter.ice": "冰岛 // ICELAND", "card.read": "阅读日志",
-        "post.back": "返回终端", "post.date": "日期:", "post.cat": "分类:",
+        "post.back": "←返回终端", "post.date": "日期:", "post.cat": "分类:",
         "media.title": "神经<br>图书馆", "media.desc": "大脑的输入源。书籍、频率与影像。", "media.books": "数据档案 // 书籍", "media.music": "声波共振 // 音乐", "media.status": "正在输入中",
         "search.placeholder": "搜索日志 (关键词 / 年月日)...",
         "search.noresults": "// 该区域未找到数据",
-        "nav.back": "返回终端",
+        "nav.back": "←返回终端",
     }
 };
 

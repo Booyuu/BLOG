@@ -1,13 +1,17 @@
 <!DOCTYPE html>
 <html lang="zh-CN" class="dark">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title data-i18n="media.title">BOYU | NEURAL LIBRARY</title>
-    
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2245%22 fill=%22%23050505%22 stroke=%22white%22 stroke-width=%222%22/><circle cx=%2250%22 cy=%2250%22 r=%2215%22 fill=%22%2300f3ff%22 filter=%22blur(2px)%22/></svg>">
 
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Rajdhani:wght@500;700&family=Space+Grotesk:wght@300;500&family=Inter:wght@300;600&display=swap" rel="stylesheet">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2245%22 fill=%22%23050505%22 stroke=%22white%22 stroke-width=%222%22/><circle cx=%2250%22 cy=%2250%22 r=%2215%22 fill=%22%2300f3ff%22 filter=%22blur(2px)%22/></svg>">
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Rajdhani:wght@500;700&family=Space+Grotesk:wght@300;500&family=Inter:wght@300;600&display=swap"
+        rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
@@ -32,52 +36,184 @@
             }
         }
     </script>
-    
+
     <style>
         /* [START] 注入滑块CSS样式 (确保滑块能动) */
-        .lang-switch-container { cursor: pointer; position: relative; width: 64px; height: 24px; display: inline-block; vertical-align: middle; margin-left: 20px; pointer-events: auto; }
-        .lang-track { position: relative; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 2px; display: flex; justify-content: space-between; align-items: center; padding: 0 8px; box-shadow: inset 0 0 10px rgba(0,0,0,0.5); }
-        .lang-text { font-family: 'Space Grotesk', monospace; font-size: 10px; font-weight: bold; color: #666; z-index: 10; pointer-events: none; }
-        .lang-glider { position: absolute; top: 2px; left: 2px; width: 30px; height: 18px; background: #fff; transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55); z-index: 5; mix-blend-mode: screen; }
-        .lang-zh-mode .lang-glider { transform: translateX(28px); background: #00f3ff; box-shadow: 0 0 15px #00f3ff; }
+        .lang-switch-container {
+            cursor: pointer;
+            position: relative;
+            width: 64px;
+            height: 24px;
+            display: inline-block;
+            vertical-align: middle;
+            margin-left: 20px;
+            pointer-events: auto;
+        }
+
+        .lang-track {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 8px;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .lang-text {
+            font-family: 'Space Grotesk', monospace;
+            font-size: 10px;
+            font-weight: bold;
+            color: #666;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .lang-glider {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 30px;
+            height: 18px;
+            background: #fff;
+            transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            z-index: 5;
+            mix-blend-mode: screen;
+        }
+
+        .lang-zh-mode .lang-glider {
+            transform: translateX(28px);
+            background: #00f3ff;
+            box-shadow: 0 0 15px #00f3ff;
+        }
+
         /* [END] 注入滑块CSS样式 */
 
-        body { background-color: #020202; color: #EAEAEA; font-family: 'Inter', sans-serif; overflow-x: hidden; }
-        ::-webkit-scrollbar { width: 0; }
-        
+        body {
+            background-color: #020202;
+            color: #EAEAEA;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        ::-webkit-scrollbar {
+            width: 0;
+        }
+
         /* 背景 */
-        #noise-layer { position: fixed; inset: 0; z-index: -1; opacity: 0.05; background-image: url("data:image/svg+xml,..."); }
-        
+        #noise-layer {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            opacity: 0.05;
+            background-image: url("data:image/svg+xml,...");
+        }
+
         /* 标题 */
         .mega-title {
-            font-family: 'Cinzel', serif; font-size: 10vw; line-height: 0.8; color: transparent;
-            -webkit-text-stroke: 1px rgba(255,255,255,0.8); opacity: 0.5;
+            font-family: 'Cinzel', serif;
+            font-size: 10vw;
+            line-height: 0.8;
+            color: transparent;
+            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.8);
+            opacity: 0.5;
         }
 
         /* 书籍卡片 */
         .book-card {
-            display: flex; gap: 20px; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1);
-            padding: 2rem 0; transition: all 0.3s; cursor: pointer;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem 0;
+            transition: all 0.3s;
+            cursor: pointer;
         }
-        .book-card:hover { padding-left: 20px; border-color: #fff; }
-        .book-cover { width: 80px; height: 110px; background: #111; border: 1px solid #333; transition: all 0.3s; position: relative; }
-        .book-card:hover .book-cover { border-color: #fff; }
-        .book-cover::before { content: ''; position: absolute; left: 2px; top: 0; width: 2px; height: 100%; background: rgba(255,255,255,0.2); }
-        .music-card { background: rgba(255,255,255,0.03); padding: 1.5rem; border: 1px solid rgba(255,255,255,0.05); transition: all 0.3s; }
-        .music-card:hover { background: rgba(255,255,255,0.08); border-color: #00f3ff; transform: translateY(-5px); }
-        .album-art { width: 60px; height: 60px; background: #222; border-radius: 50%; animation: spin 10s linear infinite; animation-play-state: paused; }
-        .music-card:hover .album-art { animation-play-state: running; box-shadow: 0 0 15px #00f3ff; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        
-        .data-pill { border: 1px solid rgba(255,255,255,0.2); padding: 6px 12px; font-family: 'Space Grotesk'; font-size: 11px; letter-spacing: 0.1em; color: #888; }
+
+        .book-card:hover {
+            padding-left: 20px;
+            border-color: #fff;
+        }
+
+        .book-cover {
+            width: 80px;
+            height: 110px;
+            background: #111;
+            border: 1px solid #333;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .book-card:hover .book-cover {
+            border-color: #fff;
+        }
+
+        .book-cover::before {
+            content: '';
+            position: absolute;
+            left: 2px;
+            top: 0;
+            width: 2px;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .music-card {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s;
+        }
+
+        .music-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: #00f3ff;
+            transform: translateY(-5px);
+        }
+
+        .album-art {
+            width: 60px;
+            height: 60px;
+            background: #222;
+            border-radius: 50%;
+            animation: spin 10s linear infinite;
+            animation-play-state: paused;
+        }
+
+        .music-card:hover .album-art {
+            animation-play-state: running;
+            box-shadow: 0 0 15px #00f3ff;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .data-pill {
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 6px 12px;
+            font-family: 'Space Grotesk';
+            font-size: 11px;
+            letter-spacing: 0.1em;
+            color: #888;
+        }
     </style>
 </head>
+
 <body>
 
     <div id="noise-layer"></div>
 
     <nav class="fixed top-0 w-full p-8 z-50 flex justify-between items-center mix-blend-difference">
-        <a href="../index.html" class="font-mono text-xs tracking-widest hover:text-white text-gray-400 transition-colors" data-i18n="nav.back">
+        <a href="../index.html"
+            class="font-mono text-xs tracking-widest hover:text-white text-gray-400 transition-colors"
+            data-i18n="nav.back">
             <i class="ri-arrow-left-line"></i> RETURN TO BASE
         </a>
         <div class="lang-switch-container" onclick="toggleLanguage()">
@@ -90,7 +226,7 @@
     </nav>
 
     <main class="max-w-[1200px] mx-auto px-8 pt-32 pb-20">
-        
+
         <div class="mb-24 grid md:grid-cols-2 gap-12 items-end">
             <div>
                 <div class="data-pill mb-8" data-i18n="media.status">CURRENTLY CONSUMING</div>
@@ -104,34 +240,41 @@
         <section class="mb-32">
             <div class="flex items-center gap-4 mb-12 border-b border-white/10 pb-4">
                 <i class="ri-book-3-line text-accent-red"></i>
-                <span class="font-mono text-xs tracking-[0.2em] text-gray-500" data-i18n="media.books">DATA ARCHIVE // BOOKS</span>
+                <span class="font-mono text-xs tracking-[0.2em] text-gray-500" data-i18n="media.books">DATA ARCHIVE //
+                    BOOKS</span>
             </div>
 
             <div class="grid md:grid-cols-2 gap-12">
                 <div class="book-card group">
-                    <div class="book-cover">I</div> 
+                    <div class="book-cover">I</div>
                     <div>
-                        <h3 class="font-serif text-2xl text-white group-hover:text-accent-red transition-colors" data-i18n="book.thinking">Thinking, Fast and Slow</h3>
+                        <h3 class="font-serif text-2xl text-white group-hover:text-accent-red transition-colors"
+                            data-i18n="book.thinking">Thinking, Fast and Slow</h3>
                         <p class="font-mono text-xs text-gray-500 mt-1" data-i18n="book.kahneman">Daniel Kahneman</p>
-                        <p class="font-sans text-sm text-gray-400 mt-4 line-clamp-2" data-i18n="book.thinking.desc">关于人类决策直觉与理性的深度剖析。交易心理学的基石。</p>
+                        <p class="font-sans text-sm text-gray-400 mt-4 line-clamp-2" data-i18n="book.thinking.desc">
+                            关于人类决策直觉与理性的深度剖析。交易心理学的基石。</p>
                     </div>
                 </div>
 
                 <div class="book-card group">
                     <div class="book-cover">II</div>
                     <div>
-                        <h3 class="font-serif text-2xl text-white group-hover:text-accent-red transition-colors" data-i18n="book.swan">The Black Swan</h3>
+                        <h3 class="font-serif text-2xl text-white group-hover:text-accent-red transition-colors"
+                            data-i18n="book.swan">The Black Swan</h3>
                         <p class="font-mono text-xs text-gray-500 mt-1" data-i18n="book.taleb">Nassim Nicholas Taleb</p>
-                        <p class="font-sans text-sm text-gray-400 mt-4 line-clamp-2" data-i18n="book.swan.desc">在这个不确定的世界里，如何应对不可预知的极端风险。</p>
+                        <p class="font-sans text-sm text-gray-400 mt-4 line-clamp-2" data-i18n="book.swan.desc">
+                            在这个不确定的世界里，如何应对不可预知的极端风险。</p>
                     </div>
                 </div>
-                
-                 <div class="book-card group">
+
+                <div class="book-card group">
                     <div class="book-cover">III</div>
                     <div>
-                        <h3 class="font-serif text-2xl text-white group-hover:text-accent-red transition-colors" data-i18n="book.jobs">Steve Jobs</h3>
+                        <h3 class="font-serif text-2xl text-white group-hover:text-accent-red transition-colors"
+                            data-i18n="book.jobs">Steve Jobs</h3>
                         <p class="font-mono text-xs text-gray-500 mt-1" data-i18n="book.isaacson">Walter Isaacson</p>
-                        <p class="font-sans text-sm text-gray-400 mt-4 line-clamp-2" data-i18n="book.jobs.desc">疯狂与完美的结合体。产品美学的极致追求。</p>
+                        <p class="font-sans text-sm text-gray-400 mt-4 line-clamp-2" data-i18n="book.jobs.desc">
+                            疯狂与完美的结合体。产品美学的极致追求。</p>
                     </div>
                 </div>
             </div>
@@ -140,27 +283,32 @@
         <section>
             <div class="flex items-center gap-4 mb-12 border-b border-white/10 pb-4">
                 <i class="ri-disc-line text-accent-blue"></i>
-                <span class="font-mono text-xs tracking-[0.2em] text-gray-500" data-i18n="media.music">SONIC WAVES // MUSIC</span>
+                <span class="font-mono text-xs tracking-[0.2em] text-gray-500" data-i18n="media.music">SONIC WAVES //
+                    MUSIC</span>
             </div>
 
             <div class="grid md:grid-cols-3 gap-6">
                 <div class="music-card">
-                    <div class="album-art" style="background-image: url('https://i.scdn.co/image/ab67616d0000b273a108e07c661f9fc54de9c43a'); background-size: cover;"></div>
+                    <div class="album-art"
+                        style="background-image: url('https://i.scdn.co/image/ab67616d0000b273a108e07c661f9fc54de9c43a'); background-size: cover;">
+                    </div>
                     <div>
                         <h4 class="font-bold text-white">Interstellar OST</h4>
                         <p class="text-xs text-gray-500 font-mono mt-1">Hans Zimmer</p>
-                         <div class="w-20 h-0.5 bg-gray-700 mt-3 overflow-hidden">
+                        <div class="w-20 h-0.5 bg-gray-700 mt-3 overflow-hidden">
                             <div class="h-full bg-accent-blue w-2/3 animate-pulse"></div>
                         </div>
                     </div>
                 </div>
 
                 <div class="music-card">
-                    <div class="album-art" style="background-image: url('https://i.scdn.co/image/ab67616d0000b273b6d4566db0d12894a1a3b7a2'); background-size: cover;"></div>
+                    <div class="album-art"
+                        style="background-image: url('https://i.scdn.co/image/ab67616d0000b273b6d4566db0d12894a1a3b7a2'); background-size: cover;">
+                    </div>
                     <div>
                         <h4 class="font-bold text-white">After Hours</h4>
                         <p class="text-xs text-gray-500 font-mono mt-1">The Weeknd</p>
-                         <div class="w-20 h-0.5 bg-gray-700 mt-3 overflow-hidden">
+                        <div class="w-20 h-0.5 bg-gray-700 mt-3 overflow-hidden">
                             <div class="h-full bg-accent-blue w-1/3 animate-pulse"></div>
                         </div>
                     </div>
@@ -171,7 +319,7 @@
                     <div>
                         <h4 class="font-bold text-white">Lofi Coding</h4>
                         <p class="text-xs text-gray-500 font-mono mt-1">Spotify Mix</p>
-                         <div class="w-20 h-0.5 bg-gray-700 mt-3 overflow-hidden">
+                        <div class="w-20 h-0.5 bg-gray-700 mt-3 overflow-hidden">
                             <div class="h-full bg-accent-blue w-full animate-pulse"></div>
                         </div>
                     </div>
@@ -182,15 +330,22 @@
     </main>
 
     <script src="../js/lang.js"></script>
-    
-    <script>
-        // 简单的入场动画
-        gsap.from("h1, p", { y: 30, opacity: 0, duration: 1, stagger: 0.2, ease: "power3.out" });
-        gsap.from(".book-card", { y: 30, opacity: 0, duration: 0.8, stagger: 0.1, delay: 0.5 });
-        gsap.from(".music-card", { y: 30, opacity: 0, duration: 0.8, stagger: 0.1, delay: 0.8 });
 
-        const lenis = new Lenis({ duration: 1.2, smooth: true });
-        function raf(time) { lenis.raf(time); requestAnimationFrame(raf); } requestAnimationFrame(raf);
+    <script>
+        // 确保所有元素加载完毕后运行动画
+        document.addEventListener("DOMContentLoaded", function () {
+
+            // 简单的入场动画 (保留原逻辑)
+            gsap.from("h1, p", { y: 30, opacity: 0, duration: 1, stagger: 0.2, ease: "power3.out" });
+            gsap.from(".book-card", { y: 30, opacity: 0, duration: 0.8, stagger: 0.1, delay: 0.5 });
+            gsap.from(".music-card", { y: 30, opacity: 0, duration: 0.8, stagger: 0.1, delay: 0.8 });
+
+            // Lenis 初始化 (保留原逻辑)
+            const lenis = new Lenis({ duration: 1.2, smooth: true });
+            function raf(time) { lenis.raf(time); requestAnimationFrame(raf); } requestAnimationFrame(raf);
+        });
     </script>
+
 </body>
+
 </html>
