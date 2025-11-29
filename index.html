@@ -468,6 +468,7 @@
                 <div
                     class="absolute top-full left-0 w-64 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2">
                     <div class="bg-black/90 backdrop-blur-xl border border-white/20 p-2 flex flex-col gap-1">
+
                         <div class="absolute top-0 left-0 w-2 h-2 border-t border-l border-accent-blue"></div>
                         <div class="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-accent-blue"></div>
 
@@ -475,8 +476,8 @@
                             onclick="playTrack(0)">
                             <div class="text-dim font-mono text-xs group-hover/item:text-accent-blue">01</div>
                             <div>
-                                <div class="text-white font-serif text-sm leading-none">Interstellar</div>
-                                <div class="text-dim text-[10px] font-mono mt-1">Hans Zimmer</div>
+                                <div class="text-white font-serif text-sm leading-none">Saman</div>
+                                <div class="text-dim text-[10px] font-mono mt-1">Ólafur Arnalds</div>
                             </div>
                             <div class="ml-auto opacity-0 group-hover/item:opacity-100 text-accent-blue"><i
                                     class="ri-play-fill"></i></div>
@@ -486,23 +487,35 @@
                             onclick="playTrack(1)">
                             <div class="text-dim font-mono text-xs group-hover/item:text-accent-blue">02</div>
                             <div>
-                                <div class="text-white font-serif text-sm leading-none">Experience</div>
-                                <div class="text-dim text-[10px] font-mono mt-1">Ludovico Einaudi</div>
+                                <div class="text-white font-serif text-sm leading-none">Oceans</div>
+                                <div class="text-dim text-[10px] font-mono mt-1">Ólafur Arnalds</div>
+                            </div>
+                            <div class="ml-auto opacity-0 group-hover/item:opacity-100 text-accent-blue"><i
+                                    class="ri-play-fill"></i></div>
+                        </div>
+
+                        <div class="track-item group/item flex items-center gap-3 p-3 hover:bg-white/10 cursor-pointer transition-colors border-b border-white/5"
+                            onclick="playTrack(2)">
+                            <div class="text-dim font-mono text-xs group-hover/item:text-accent-blue">03</div>
+                            <div>
+                                <div class="text-white font-serif text-sm leading-none">Loom</div>
+                                <div class="text-dim text-[10px] font-mono mt-1">Ólafur Arnalds</div>
                             </div>
                             <div class="ml-auto opacity-0 group-hover/item:opacity-100 text-accent-blue"><i
                                     class="ri-play-fill"></i></div>
                         </div>
 
                         <div class="track-item group/item flex items-center gap-3 p-3 hover:bg-white/10 cursor-pointer transition-colors"
-                            onclick="playTrack(2)">
-                            <div class="text-dim font-mono text-xs group-hover/item:text-accent-blue">03</div>
+                            onclick="playTrack(3)">
+                            <div class="text-dim font-mono text-xs group-hover/item:text-accent-blue">04</div>
                             <div>
-                                <div class="text-white font-serif text-sm leading-none">Cornfield Chase</div>
-                                <div class="text-dim text-[10px] font-mono mt-1">Hans Zimmer</div>
+                                <div class="text-white font-serif text-sm leading-none">My Only Girl</div>
+                                <div class="text-dim text-[10px] font-mono mt-1">方大同</div>
                             </div>
                             <div class="ml-auto opacity-0 group-hover/item:opacity-100 text-accent-blue"><i
                                     class="ri-play-fill"></i></div>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -941,7 +954,7 @@
 
         // 1. 歌单配置 (请确保你上传了对应的文件到 assets/music/ 文件夹)
         const playlist = [
-            { title: "Saman", artist: "Ólafur Arnalds", src: "assets/saman.mp3" },
+            { title: "Saman", artist: "Ólafur Arnalds", src: "assets/Saman.mp3" },
             { title: "Oceans", artist: "Ólafur Arnalds", src: "assets/Oceans.mp3" },
             { title: "Loom", artist: "Ólafur Arnalds", src: "assets/Loom.mp3" },
             { title: "My Only Girl", artist: "方大同", src: "assets/MyOnlyGirl.mp3" }
