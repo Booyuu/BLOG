@@ -1,0 +1,192 @@
+// === 星际音频核心 V6.0 (记忆版) ===
+
+document.addEventListener("DOMContentLoaded", () => {
+    
+    // 1. 定义歌单
+    const playlist = [
+        { title: "Saman", artist: "Ólafur Arnalds", src: "assets/Saman.mp3" },
+        { title: "Oceans", artist: "Ólafur Arnalds", src: "assets/Oceans.mp3" },
+        { title: "Loom", artist: "Ólafur Arnalds", src: "assets/Loom.mp3" },
+        { title: "My Only Girl", artist: "方大同", src: "assets/MyOnlyGirl.mp3" }
+    ];
+
+    // 2. 获取元素 (兼容所有页面的路径差异)
+    const audio = document.getElementById('global-audio');
+    // 自动修正路径：如果当前在子文件夹(如blog/)，路径前加 ../
+    const isSubPage = window.location.pathname.includes('/blog/') || window.location.pathname.includes('/travel/');
+    const pathPrefix = isSubPage ? '../' : '';
+
+    const masterWave = document.getElementById('master-wave');
+    const trackNameDisplay = document.getElementById('current-track-name');
+    const timeDisplay = document.getElementById('time-display');
+    const progressContainer = document.getElementById('progress-container');
+    const progressBar = document.getElementById('progress-bar');
+    const playlistContainer = document.getElementById('playlist-container');
+    
+    let currentTrackIndex = 0;
+    let isDragging = false;
+
+    // === 核心：记忆恢复系统 ===
+    function initAudioState() {
+        // 读取记忆
+        const savedIndex = localStorage.getItem('audio_index');
+        const savedTime = localStorage.getItem('audio_time');
+        const wasPlaying = localStorage.getItem('audio_playing') === 'true';
+
+        if (savedIndex !== null) {
+            currentTrackIndex = parseInt(savedIndex);
+            audio.src = pathPrefix + playlist[currentTrackIndex].src; // 修正路径
+            audio.currentTime = parseFloat(savedTime || 0);
+        } else {
+            // 没记忆，初始化第一首
+            audio.src = pathPrefix + playlist[0].src;
+        }
+
+        // 渲染播放列表
+        renderPlaylist();
+        
+        // 尝试恢复播放状态
+        // 注意：浏览器可能阻止自动播放，如果被阻止，保持暂停状态
+        if (wasPlaying) {
+            updateUIState(true); // 先把UI变亮
+            audio.play().catch(() => {
+                console.log("浏览器阻止了自动续播，等待用户交互");
+                updateUIState(false); // 失败则变回暂停UI
+            });
+        } else {
+            updateUIState(false);
+        }
+    }
+
+    // === 核心：记忆保存系统 ===
+    // 页面关闭/跳转前，疯狂保存当前状态
+    window.addEventListener('beforeunload', () => {
+        localStorage.setItem('audio_index', currentTrackIndex);
+        localStorage.setItem('audio_time', audio.currentTime);
+        localStorage.setItem('audio_playing', !audio.paused);
+    });
+
+    // --- 以下是常规控制逻辑 ---
+
+    function renderPlaylist() {
+        if(!playlistContainer) return;
+        playlistContainer.innerHTML = '';
+        playlist.forEach((track, index) => {
+            const div = document.createElement('div');
+            div.className = `track-item relative group/item border-b border-white/5 transition-colors hover:bg-white/5`;
+            div.innerHTML = `
+                <div class="flex items-center gap-4 p-3 cursor-pointer" onclick="window.playTrack(${index})">
+                    <div class="text-dim text-xs font-mono w-4">0${index + 1}</div>
+                    <div class="flex-1">
+                        <div class="text-white font-serif text-sm tracking-wide track-title">${track.title}</div>
+                        <div class="text-dim text-[10px] font-mono mt-0.5">${track.artist}</div>
+                    </div>
+                    <div class="w-6 flex justify-center text-accent-blue transition-opacity opacity-0 group-hover/item:opacity-50 icon-box">
+                        <i class="ri-play-fill track-icon text-lg"></i>
+                    </div>
+                </div>
+            `;
+            playlistContainer.appendChild(div);
+        });
+        updateUIState(!audio.paused);
+    }
+
+    window.toggleMainPlayback = function() {
+        if (audio.paused) {
+            audio.play().then(() => updateUIState(true)).catch(console.error);
+        } else {
+            audio.pause();
+            updateUIState(false);
+        }
+    };
+
+    window.playTrack = function(index) {
+        if (currentTrackIndex === index && !audio.paused) {
+            audio.pause(); updateUIState(false);
+        } else {
+            currentTrackIndex = index;
+            audio.src = pathPrefix + playlist[index].src;
+            audio.volume = 0.5;
+            audio.play().then(() => updateUIState(true)).catch(console.error);
+        }
+    };
+
+    function updateUIState(isPlaying) {
+        const track = playlist[currentTrackIndex];
+        if(trackNameDisplay) trackNameDisplay.innerHTML = isPlaying ? `<span class="text-accent-blue">PLAYING:</span> ${track.title.toUpperCase()}` : "AUDIO PAUSED";
+        
+        if(masterWave) {
+            if(isPlaying) {
+                masterWave.innerHTML = `
+                    <div class="wave-bar w-[2px] h-1 bg-accent-blue animate-[sound-wave_0.8s_infinite_alternate]"></div>
+                    <div class="wave-bar w-[2px] h-2 bg-accent-blue animate-[sound-wave_0.8s_infinite_alternate_0.1s]"></div>
+                    <div class="wave-bar w-[2px] h-1.5 bg-accent-blue animate-[sound-wave_0.8s_infinite_alternate_0.2s]"></div>
+                    <div class="wave-bar w-[2px] h-3 bg-accent-blue animate-[sound-wave_0.8s_infinite_alternate_0.3s]"></div>`;
+            } else {
+                masterWave.innerHTML = `
+                    <div class="wave-bar w-[2px] h-1 bg-white"></div><div class="wave-bar w-[2px] h-2 bg-white"></div>
+                    <div class="wave-bar w-[2px] h-1.5 bg-white"></div><div class="wave-bar w-[2px] h-3 bg-white"></div>`;
+            }
+        }
+
+        if(timeDisplay && isPlaying) timeDisplay.classList.remove('hidden');
+        if(progressContainer && isPlaying) progressContainer.classList.remove('hidden');
+
+        document.querySelectorAll('.track-item').forEach((item, index) => {
+            const title = item.querySelector('.track-title');
+            const iconBox = item.querySelector('.icon-box');
+            const icon = item.querySelector('.track-icon');
+            if (index === currentTrackIndex) {
+                title?.classList.add('text-accent-blue');
+                iconBox?.classList.remove('opacity-0'); iconBox?.classList.add('opacity-100');
+                icon.className = isPlaying ? 'ri-pause-fill track-icon text-lg' : 'ri-play-fill track-icon text-lg';
+            } else {
+                title?.classList.remove('text-accent-blue');
+                iconBox?.classList.remove('opacity-100'); iconBox?.classList.add('opacity-0');
+                icon.className = 'ri-play-fill track-icon text-lg';
+            }
+        });
+    }
+
+    function formatTime(s) { return isNaN(s) ? "0:00" : Math.floor(s/60) + ":" + (Math.floor(s%60)<10?'0':'') + Math.floor(s%60); }
+
+    audio.addEventListener('timeupdate', () => {
+        if (!isDragging && progressBar) {
+            const percent = (audio.currentTime / audio.duration) * 100;
+            progressBar.style.width = `${percent}%`;
+            if(timeDisplay) timeDisplay.innerText = `${formatTime(audio.currentTime)} / ${formatTime(audio.duration)}`;
+        }
+    });
+
+    if(progressContainer) {
+        progressContainer.addEventListener('mousedown', (e) => { e.stopPropagation(); isDragging = true; });
+        progressContainer.addEventListener('click', (e) => { 
+            e.stopPropagation(); 
+            const rect = progressContainer.getBoundingClientRect();
+            audio.currentTime = ((e.clientX - rect.left) / rect.width) * audio.duration;
+        });
+    }
+    
+    document.addEventListener('mousemove', (e) => {
+        if (isDragging && progressContainer) {
+            const rect = progressContainer.getBoundingClientRect();
+            const percent = Math.min(Math.max((e.clientX - rect.left) / rect.width, 0), 1);
+            progressBar.style.width = `${percent * 100}%`;
+        }
+    });
+    document.addEventListener('mouseup', (e) => {
+        if(isDragging) {
+            isDragging = false;
+            const rect = progressContainer.getBoundingClientRect();
+            audio.currentTime = ((e.clientX - rect.left) / rect.width) * audio.duration;
+        }
+    });
+
+    audio.addEventListener('ended', () => {
+        let next = (currentTrackIndex + 1) % playlist.length;
+        playTrack(next);
+    });
+
+    // 🚀 启动！
+    initAudioState();
+});
