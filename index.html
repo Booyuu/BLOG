@@ -452,74 +452,89 @@
 
             <div class="h-4 w-[1px] bg-white/20"></div>
 
-            <div class="relative group z-50">
+            <div class="relative group z-50 font-mono" id="audio-console">
 
-                <button class="flex items-center gap-2 py-4 opacity-80 hover:opacity-100 transition-opacity">
-                    <div class="flex items-end gap-[2px] h-3" id="master-wave">
-                        <div class="wave-bar w-[2px] h-1 bg-white"></div>
-                        <div class="wave-bar w-[2px] h-2 bg-white"></div>
-                        <div class="wave-bar w-[2px] h-1.5 bg-white"></div>
-                        <div class="wave-bar w-[2px] h-3 bg-white"></div>
+                <div class="flex flex-col">
+                    <button
+                        class="flex items-center gap-3 py-3 opacity-80 hover:opacity-100 transition-opacity cursor-pointer">
+                        <div class="flex items-end gap-[2px] h-3" id="master-wave">
+                            <div class="wave-bar w-[2px] h-1 bg-white"></div>
+                            <div class="wave-bar w-[2px] h-2 bg-white"></div>
+                            <div class="wave-bar w-[2px] h-1.5 bg-white"></div>
+                            <div class="wave-bar w-[2px] h-3 bg-white"></div>
+                        </div>
+                        <div class="flex flex-col leading-none">
+                            <span class="text-[10px] tracking-widest text-white truncate max-w-[120px]"
+                                id="current-track-name">AUDIO OFF</span>
+                            <div id="time-display" class="text-[8px] text-dim mt-1 hidden">
+                                <span id="current-time">0:00</span> / <span id="duration">0:00</span>
+                            </div>
+                        </div>
+                    </button>
+                    <div class="h-1 w-full bg-white/10 rounded-full overflow-hidden cursor-pointer relative group/progress mb-4 hidden"
+                        id="progress-container">
+                        <div class="h-full bg-accent-blue w-0 relative" id="progress-bar">
+                            <div
+                                class="absolute right-0 top-1/2 -translate-y-1/2 w-2 h-2 bg-white rounded-full opacity-0 group-hover/progress:opacity-100 transition-opacity shadow-[0_0_10px_#00f3ff]">
+                            </div>
+                        </div>
                     </div>
-                    <span class="text-[10px] font-mono tracking-widest text-white" id="current-track-name">AUDIO
-                        OFF</span>
-                </button>
+                </div>
 
                 <div
-                    class="absolute top-full left-0 w-64 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2">
-                    <div class="bg-black/90 backdrop-blur-xl border border-white/20 p-2 flex flex-col gap-1">
-
+                    class="absolute top-full left-0 w-72 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2 pointer-events-none group-hover:pointer-events-auto">
+                    <div
+                        class="bg-black/90 backdrop-blur-xl border border-white/20 p-2 flex flex-col gap-1 shadow-2xl shadow-blue-900/20">
                         <div class="absolute top-0 left-0 w-2 h-2 border-t border-l border-accent-blue"></div>
                         <div class="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-accent-blue"></div>
 
-                        <div class="track-item group/item flex items-center gap-3 p-3 hover:bg-white/10 cursor-pointer transition-colors border-b border-white/5"
+                        <div class="track-item flex items-center gap-3 p-3 hover:bg-white/10 cursor-pointer transition-colors border-b border-white/5"
                             onclick="playTrack(0)">
-                            <div class="text-dim font-mono text-xs group-hover/item:text-accent-blue">01</div>
+                            <div class="text-dim text-xs">01</div>
                             <div>
                                 <div class="text-white font-serif text-sm leading-none">Saman</div>
-                                <div class="text-dim text-[10px] font-mono mt-1">Ólafur Arnalds</div>
+                                <div class="text-dim text-[10px] mt-1">Ólafur Arnalds</div>
                             </div>
-                            <div class="ml-auto opacity-0 group-hover/item:opacity-100 text-accent-blue"><i
-                                    class="ri-play-fill"></i></div>
+                            <div class="ml-auto text-accent-blue opacity-0 transition-opacity track-icon-container">
+                                <i class="ri-play-fill track-icon"></i>
+                            </div>
                         </div>
 
-                        <div class="track-item group/item flex items-center gap-3 p-3 hover:bg-white/10 cursor-pointer transition-colors border-b border-white/5"
+                        <div class="track-item flex items-center gap-3 p-3 hover:bg-white/10 cursor-pointer transition-colors border-b border-white/5"
                             onclick="playTrack(1)">
-                            <div class="text-dim font-mono text-xs group-hover/item:text-accent-blue">02</div>
+                            <div class="text-dim text-xs">02</div>
                             <div>
                                 <div class="text-white font-serif text-sm leading-none">Oceans</div>
-                                <div class="text-dim text-[10px] font-mono mt-1">Ólafur Arnalds</div>
+                                <div class="text-dim text-[10px] mt-1">Ólafur Arnalds</div>
                             </div>
-                            <div class="ml-auto opacity-0 group-hover/item:opacity-100 text-accent-blue"><i
-                                    class="ri-play-fill"></i></div>
+                            <div class="ml-auto text-accent-blue opacity-0 transition-opacity track-icon-container"><i
+                                    class="ri-play-fill track-icon"></i></div>
                         </div>
 
-                        <div class="track-item group/item flex items-center gap-3 p-3 hover:bg-white/10 cursor-pointer transition-colors border-b border-white/5"
+                        <div class="track-item flex items-center gap-3 p-3 hover:bg-white/10 cursor-pointer transition-colors border-b border-white/5"
                             onclick="playTrack(2)">
-                            <div class="text-dim font-mono text-xs group-hover/item:text-accent-blue">03</div>
+                            <div class="text-dim text-xs">03</div>
                             <div>
                                 <div class="text-white font-serif text-sm leading-none">Loom</div>
-                                <div class="text-dim text-[10px] font-mono mt-1">Ólafur Arnalds</div>
+                                <div class="text-dim text-[10px] mt-1">Ólafur Arnalds</div>
                             </div>
-                            <div class="ml-auto opacity-0 group-hover/item:opacity-100 text-accent-blue"><i
-                                    class="ri-play-fill"></i></div>
+                            <div class="ml-auto text-accent-blue opacity-0 transition-opacity track-icon-container"><i
+                                    class="ri-play-fill track-icon"></i></div>
                         </div>
 
-                        <div class="track-item group/item flex items-center gap-3 p-3 hover:bg-white/10 cursor-pointer transition-colors"
+                        <div class="track-item flex items-center gap-3 p-3 hover:bg-white/10 cursor-pointer transition-colors"
                             onclick="playTrack(3)">
-                            <div class="text-dim font-mono text-xs group-hover/item:text-accent-blue">04</div>
+                            <div class="text-dim text-xs">04</div>
                             <div>
                                 <div class="text-white font-serif text-sm leading-none">My Only Girl</div>
-                                <div class="text-dim text-[10px] font-mono mt-1">方大同</div>
+                                <div class="text-dim text-[10px] mt-1">方大同</div>
                             </div>
-                            <div class="ml-auto opacity-0 group-hover/item:opacity-100 text-accent-blue"><i
-                                    class="ri-play-fill"></i></div>
+                            <div class="ml-auto text-accent-blue opacity-0 transition-opacity track-icon-container"><i
+                                    class="ri-play-fill track-icon"></i></div>
                         </div>
-
                     </div>
                 </div>
             </div>
-
             <audio id="global-audio"></audio>
         </div>
 
@@ -950,9 +965,9 @@
         const lenis = new Lenis({ duration: 1.5, smooth: true });
         function raf(time) { lenis.raf(time); requestAnimationFrame(raf); } requestAnimationFrame(raf);
 
-        // === 音乐控制系统 V2.0 (歌单版) ===
+        // === 星际音频系统 V3.0 (Pro版) ===
 
-        // 1. 歌单配置 (请确保你上传了对应的文件到 assets/music/ 文件夹)
+        // 配置 (请确保文件名大小写正确)
         const playlist = [
             { title: "Saman", artist: "Ólafur Arnalds", src: "assets/Saman.mp3" },
             { title: "Oceans", artist: "Ólafur Arnalds", src: "assets/Oceans.mp3" },
@@ -960,49 +975,135 @@
             { title: "My Only Girl", artist: "方大同", src: "assets/MyOnlyGirl.mp3" }
         ];
 
+        // DOM 元素获取
         const audio = document.getElementById('global-audio');
         const masterWave = document.getElementById('master-wave');
         const trackNameDisplay = document.getElementById('current-track-name');
+        const timeDisplayArea = document.getElementById('time-display');
+        const progressContainer = document.getElementById('progress-container');
+        const progressBar = document.getElementById('progress-bar');
+        const currentTimeEl = document.getElementById('current-time');
+        const durationEl = document.getElementById('duration');
+        const trackItems = document.querySelectorAll('.track-item');
+
         let currentTrackIndex = -1;
+        let isDragging = false; // 是否正在拖动进度条
 
-        // 2. 播放函数
-        window.playTrack = function (index) {
-            // 如果点击的是当前正在放的歌 -> 暂停/继续
-            if (currentTrackIndex === index && !audio.paused) {
-                audio.pause();
-                updateUI(false);
-                return;
-            }
+        // 格式化时间 (将秒转为 mm:ss)
+        function formatTime(seconds) {
+            if (isNaN(seconds)) return "0:00";
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        }
 
-            // 切歌
-            currentTrackIndex = index;
-            audio.src = playlist[index].src;
-            audio.volume = 0.4;
-
-            audio.play().then(() => {
-                updateUI(true);
-            }).catch(e => console.log("Play error:", e));
-        };
-
-        // 3. UI 更新函数
-        function updateUI(isPlaying) {
+        // 更新 UI 状态 (图标、文字、波形)
+        function updateUIState(isPlaying) {
             const track = playlist[currentTrackIndex];
 
-            if (isPlaying) {
-                // 更新顶部文字
-                trackNameDisplay.innerHTML = `<span class="text-accent-blue">PLAYING:</span> ${track.title.toUpperCase()}`;
-                // 激活波形动画
-                masterWave.classList.add('playing');
-                // 改变波形颜色
-                document.querySelectorAll('.wave-bar').forEach(bar => bar.style.backgroundColor = '#00f3ff');
-            } else {
-                trackNameDisplay.innerHTML = "AUDIO PAUSED";
-                masterWave.classList.remove('playing');
-                document.querySelectorAll('.wave-bar').forEach(bar => bar.style.backgroundColor = 'white');
+            // 1. 重置所有列表项图标为播放三角，并隐藏
+            trackItems.forEach(item => {
+                const iconContainer = item.querySelector('.track-icon-container');
+                const icon = item.querySelector('.track-icon');
+                iconContainer.classList.remove('opacity-100');
+                icon.classList.remove('ri-pause-fill');
+                icon.classList.add('ri-play-fill');
+            });
+
+            if (currentTrackIndex !== -1) {
+                // 2. 高亮当前列表项
+                const currentItem = trackItems[currentTrackIndex];
+                const currentIconContainer = currentItem.querySelector('.track-icon-container');
+                const currentIcon = currentItem.querySelector('.track-icon');
+
+                currentIconContainer.classList.add('opacity-100'); // 显示图标容器
+
+                if (isPlaying) {
+                    // 播放状态
+                    trackNameDisplay.innerHTML = `<span class="text-accent-blue">▶</span> ${track.title}`;
+                    masterWave.classList.add('playing');
+                    timeDisplayArea.classList.remove('hidden');
+                    progressContainer.classList.remove('hidden');
+                    // 图标变暂停
+                    currentIcon.classList.remove('ri-play-fill');
+                    currentIcon.classList.add('ri-pause-fill');
+                } else {
+                    // 暂停状态
+                    trackNameDisplay.innerHTML = `<span class="text-dim">❚❚</span> ${track.title}`;
+                    masterWave.classList.remove('playing');
+                    // 图标变播放
+                    currentIcon.classList.remove('ri-pause-fill');
+                    currentIcon.classList.add('ri-play-fill');
+                }
             }
         }
 
-        // 4. 自动连播
+        // 核心播放函数
+        window.playTrack = function (index) {
+            // 情况A：点击了当前正在播放或暂停的歌
+            if (currentTrackIndex === index) {
+                if (audio.paused) {
+                    audio.play(); // 继续播放 (断点续传)
+                    updateUIState(true);
+                } else {
+                    audio.pause(); // 暂停
+                    updateUIState(false);
+                }
+                return;
+            }
+
+            // 情况B：切歌 (加载新源，从头播)
+            currentTrackIndex = index;
+            audio.src = playlist[index].src;
+            audio.volume = 0.5;
+            // 加载元数据后更新总时长
+            audio.addEventListener('loadedmetadata', () => {
+                durationEl.innerText = formatTime(audio.duration);
+            }, { once: true });
+
+            audio.play().then(() => {
+                updateUIState(true);
+            }).catch(e => console.error("播放失败:", e));
+        };
+
+        // === 进度条与时间控制 ===
+
+        // 1. 监听时间更新
+        audio.addEventListener('timeupdate', () => {
+            if (!isDragging) { // 拖动时不更新，防止跳动
+                const percent = (audio.currentTime / audio.duration) * 100;
+                progressBar.style.width = `${percent}%`;
+                currentTimeEl.innerText = formatTime(audio.currentTime);
+            }
+        });
+
+        // 2. 进度条点击跳转
+        function seek(e) {
+            const rect = progressContainer.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            const width = rect.width;
+            const percent = clickX / width;
+            audio.currentTime = percent * audio.duration;
+        }
+
+        progressContainer.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            seek(e); // 点击即跳转
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                seek(e); // 拖动时持续跳转
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            if (isDragging) {
+                isDragging = false;
+            }
+        });
+
+        // 3. 自动连播
         audio.addEventListener('ended', () => {
             let nextIndex = (currentTrackIndex + 1) % playlist.length;
             playTrack(nextIndex);
