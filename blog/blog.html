@@ -74,15 +74,35 @@
 <body>
     <div id="noise-layer"></div>
 
-    <nav class="fixed top-0 w-full p-8 z-50 flex justify-between items-center mix-blend-difference">
+    <nav class="fixed top-0 w-full p-8 z-50 flex justify-between items-center mix-blend-difference pointer-events-none">
 
-        <a href="../index.html"
-            class="font-mono text-xs tracking-widest hover:text-white text-gray-400 transition-colors">
-            <i class="ri-arrow-left-line"></i> RETURN TO BASE
-        </a>
+        <div class="pointer-events-auto flex items-center gap-6">
 
-        <div class="font-serif text-xl tracking-widest text-white hidden md:block">PLANETARY LOGS</div>
-        <div id="audio-slot"></div>
+            <a href="../index.html"
+                class="font-mono text-xs tracking-widest hover:text-white text-gray-400 transition-colors group flex items-center gap-2"
+                data-i18n="nav.back">
+                <i class="ri-arrow-left-line group-hover:-translate-x-1 transition-transform"></i> RETURN TO BASE
+            </a>
+
+            <div class="h-4 w-[1px] bg-white/20"></div>
+
+            <div id="audio-slot"></div>
+
+        </div>
+
+        <div class="font-serif text-xl tracking-widest text-white absolute left-1/2 -translate-x-1/2 hidden md:block">
+            PLANETARY LOGS
+        </div>
+
+        <div class="pointer-events-auto">
+            <div class="lang-switch-container" onclick="toggleLanguage()">
+                <div class="lang-track">
+                    <span id="lang-en" class="lang-text left" style="color: #000;">EN</span>
+                    <span class="lang-text right">CN</span>
+                    <div class="lang-glider"></div>
+                </div>
+            </div>
+        </div>
 
     </nav>
 

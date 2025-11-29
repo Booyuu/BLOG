@@ -8,47 +8,49 @@ document.addEventListener("DOMContentLoaded", () => {
     const isSubPage = subFolders.some(folder => path.includes(folder));
     const pathPrefix = isSubPage ? '../' : '';
 
-    // === ⚡️ 核心升级：自动注入播放器 HTML ===
+    // === ⚡️ 自动注入播放器 HTML (插座模式 - 左侧布局版) ===
     function injectAudioPlayer() {
         const slot = document.getElementById('audio-slot');
-        if (!slot) return; // 如果页面没留插口，就不注入
+        if (!slot) return;
 
-        // 播放器的 HTML 模板
         slot.innerHTML = `
-            <div class="relative group font-mono" id="audio-console">
-                <div class="relative">
-                    <button id="music-trigger" class="flex items-center gap-3 opacity-80 hover:opacity-100 transition-opacity cursor-pointer" onclick="window.toggleMainPlayback()">
-                        <div class="flex items-end gap-[2px] h-3" id="master-wave">
-                            <div class="wave-bar w-[2px] h-1 bg-white"></div>
-                            <div class="wave-bar w-[2px] h-2 bg-white"></div>
-                            <div class="wave-bar w-[2px] h-1.5 bg-white"></div>
-                            <div class="wave-bar w-[2px] h-3 bg-white"></div>
-                        </div>
-                        <div class="flex flex-col leading-none text-left">
-                            <span class="text-[10px] tracking-widest text-white truncate max-w-[120px]" id="current-track-name">AUDIO OFF</span>
-                            <span id="time-display" class="text-[8px] text-dim mt-1 hidden">0:00 / 0:00</span>
-                        </div>
-                    </button>
-                    <div id="progress-container" class="absolute bottom-[-5px] left-0 w-full h-[2px] bg-white/20 cursor-pointer hidden hover:h-[4px] transition-all z-50">
-                        <div id="progress-bar" class="h-full bg-accent-blue w-0 relative">
-                            <div class="absolute right-0 top-1/2 -translate-y-1/2 w-2 h-2 bg-white rounded-full shadow-[0_0_10px_#00f3ff] opacity-0 group-hover:opacity-100"></div>
+            <div class="flex items-center gap-6">
+                
+                <div class="h-4 w-[1px] bg-white/20"></div>
+
+                <div class="relative group font-mono" id="audio-console">
+                    <div class="relative">
+                        <button id="music-trigger" class="flex items-center gap-3 opacity-80 hover:opacity-100 transition-opacity cursor-pointer" onclick="window.toggleMainPlayback()">
+                            <div class="flex items-end gap-[2px] h-3" id="master-wave">
+                                <div class="wave-bar w-[2px] h-1 bg-white"></div>
+                                <div class="wave-bar w-[2px] h-2 bg-white"></div>
+                                <div class="wave-bar w-[2px] h-1.5 bg-white"></div>
+                                <div class="wave-bar w-[2px] h-3 bg-white"></div>
+                            </div>
+                            <div class="flex flex-col leading-none text-left">
+                                <span class="text-[10px] tracking-widest text-white truncate max-w-[120px]" id="current-track-name">AUDIO OFF</span>
+                                <span id="time-display" class="text-[8px] text-dim mt-1 hidden">0:00 / 0:00</span>
+                            </div>
+                        </button>
+                        <div id="progress-container" class="absolute bottom-[-5px] left-0 w-full h-[2px] bg-white/20 cursor-pointer hidden hover:h-[4px] transition-all z-50">
+                            <div id="progress-bar" class="h-full bg-accent-blue w-0 relative">
+                                <div class="absolute right-0 top-1/2 -translate-y-1/2 w-2 h-2 bg-white rounded-full shadow-[0_0_10px_#00f3ff] opacity-0 group-hover:opacity-100"></div>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="absolute top-full ${isSubPage ? 'left-0' : 'right-0'} w-64 pt-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2 pointer-events-none group-hover:pointer-events-auto">
-                    <div class="bg-black/95 backdrop-blur-xl border border-white/20 p-2 flex flex-col gap-1 shadow-2xl">
-                        <div class="absolute top-0 left-0 w-2 h-2 border-t border-l border-accent-blue"></div>
-                        <div class="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-accent-blue"></div>
-                        <div id="playlist-container"></div>
+                    
+                    <div class="absolute top-full left-0 w-64 pt-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2 pointer-events-none group-hover:pointer-events-auto">
+                        <div class="bg-black/95 backdrop-blur-xl border border-white/20 p-2 flex flex-col gap-1 shadow-2xl">
+                            <div class="absolute top-0 left-0 w-2 h-2 border-t border-l border-accent-blue"></div>
+                            <div class="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-accent-blue"></div>
+                            <div id="playlist-container"></div>
+                        </div>
                     </div>
                 </div>
             </div>
             <audio id="global-audio"></audio>
         `;
-        // *注意*：上面用到 ${isSubPage ? 'left-0' : 'right-0'} 是为了让子页面的菜单左对齐，主页的右对齐
     }
-
-    // 先注入 HTML，再执行后续逻辑
     injectAudioPlayer();
 
     // --- 以下逻辑保持不变 ---
@@ -69,7 +71,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const progressContainer = document.getElementById('progress-container');
     const progressBar = document.getElementById('progress-bar');
     const playlistContainer = document.getElementById('playlist-container');
-    
+
     let currentTrackIndex = 0;
     let isDragging = false;
     audio.volume = 0.5;
@@ -84,25 +86,25 @@ document.addEventListener("DOMContentLoaded", () => {
             currentTrackIndex = parseInt(savedIndex);
             audio.src = pathPrefix + playlist[currentTrackIndex].src;
             const restoreTime = parseFloat(savedTime || 0);
-            if(restoreTime > 0 && isFinite(restoreTime)) audio.currentTime = restoreTime;
+            if (restoreTime > 0 && isFinite(restoreTime)) audio.currentTime = restoreTime;
         } else {
             audio.src = pathPrefix + playlist[0].src;
         }
 
         renderPlaylist();
-        
+
         if (savedIndex !== null) { // 只要有记忆就尝试恢复
-             updateUIState(true); 
-             // 尝试自动播放
-             const playPromise = audio.play();
-             if (playPromise !== undefined) {
-                 playPromise.catch(() => {
-                     console.log("Autoplay blocked.");
-                     const resume = () => { audio.play(); removeListeners(); };
-                     const removeListeners = () => ['click','keydown','wheel','touchstart'].forEach(e => document.removeEventListener(e, resume));
-                     ['click','keydown','wheel','touchstart'].forEach(e => document.addEventListener(e, resume, {once:true}));
-                 });
-             }
+            updateUIState(true);
+            // 尝试自动播放
+            const playPromise = audio.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(() => {
+                    console.log("Autoplay blocked.");
+                    const resume = () => { audio.play(); removeListeners(); };
+                    const removeListeners = () => ['click', 'keydown', 'wheel', 'touchstart'].forEach(e => document.removeEventListener(e, resume));
+                    ['click', 'keydown', 'wheel', 'touchstart'].forEach(e => document.addEventListener(e, resume, { once: true }));
+                });
+            }
         } else {
             updateUIState(false);
         }
@@ -117,7 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // === 控制逻辑 ===
     function renderPlaylist() {
-        if(!playlistContainer) return;
+        if (!playlistContainer) return;
         playlistContainer.innerHTML = '';
         playlist.forEach((track, index) => {
             const div = document.createElement('div');
@@ -139,7 +141,7 @@ document.addEventListener("DOMContentLoaded", () => {
         setTimeout(() => updateUIState(!audio.paused), 50);
     }
 
-    window.toggleMainPlayback = function() {
+    window.toggleMainPlayback = function () {
         if (audio.paused) {
             if (!audio.src || audio.src === window.location.href) audio.src = pathPrefix + playlist[currentTrackIndex].src;
             audio.play().then(() => updateUIState(true));
@@ -149,7 +151,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
-    window.playTrack = function(index) {
+    window.playTrack = function (index) {
         if (currentTrackIndex === index && !audio.paused) {
             audio.pause(); updateUIState(false);
         } else {
@@ -161,10 +163,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function updateUIState(isPlaying) {
         const track = playlist[currentTrackIndex];
-        if(trackNameDisplay) trackNameDisplay.innerHTML = isPlaying ? `<span class="text-accent-blue">PLAYING:</span> ${track.title.toUpperCase()}` : "AUDIO PAUSED";
-        
-        if(masterWave) {
-            if(isPlaying) {
+        if (trackNameDisplay) trackNameDisplay.innerHTML = isPlaying ? `<span class="text-accent-blue">PLAYING:</span> ${track.title.toUpperCase()}` : "AUDIO PAUSED";
+
+        if (masterWave) {
+            if (isPlaying) {
                 masterWave.classList.add('playing');
                 masterWave.innerHTML = `<div class="wave-bar w-[2px] h-1 bg-accent-blue animate-[sound-wave_0.8s_infinite_alternate]"></div><div class="wave-bar w-[2px] h-2 bg-accent-blue animate-[sound-wave_0.8s_infinite_alternate_0.1s]"></div><div class="wave-bar w-[2px] h-1.5 bg-accent-blue animate-[sound-wave_0.8s_infinite_alternate_0.2s]"></div><div class="wave-bar w-[2px] h-3 bg-accent-blue animate-[sound-wave_0.8s_infinite_alternate_0.3s]"></div>`;
             } else {
@@ -172,9 +174,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 masterWave.innerHTML = `<div class="wave-bar w-[2px] h-1 bg-white"></div><div class="wave-bar w-[2px] h-2 bg-white"></div><div class="wave-bar w-[2px] h-1.5 bg-white"></div><div class="wave-bar w-[2px] h-3 bg-white"></div>`;
             }
         }
-        
-        if(timeDisplay && isPlaying) timeDisplay.classList.remove('hidden');
-        if(progressContainer && isPlaying) progressContainer.classList.remove('hidden');
+
+        if (timeDisplay && isPlaying) timeDisplay.classList.remove('hidden');
+        if (progressContainer && isPlaying) progressContainer.classList.remove('hidden');
 
         document.querySelectorAll('.track-item').forEach((item, index) => {
             const title = item.querySelector('.track-title');
@@ -183,28 +185,28 @@ document.addEventListener("DOMContentLoaded", () => {
             if (index === currentTrackIndex) {
                 title?.classList.add('text-accent-blue');
                 iconBox?.classList.remove('opacity-0'); iconBox?.classList.add('opacity-100');
-                if(icon) icon.className = isPlaying ? 'ri-pause-fill track-icon text-lg' : 'ri-play-fill track-icon text-lg';
+                if (icon) icon.className = isPlaying ? 'ri-pause-fill track-icon text-lg' : 'ri-play-fill track-icon text-lg';
             } else {
                 title?.classList.remove('text-accent-blue');
                 iconBox?.classList.remove('opacity-100'); iconBox?.classList.add('opacity-0');
-                if(icon) icon.className = 'ri-play-fill track-icon text-lg';
+                if (icon) icon.className = 'ri-play-fill track-icon text-lg';
             }
         });
     }
 
-    function formatTime(s) { return isNaN(s) ? "0:00" : Math.floor(s/60) + ":" + (Math.floor(s%60)<10?'0':'') + Math.floor(s%60); }
+    function formatTime(s) { return isNaN(s) ? "0:00" : Math.floor(s / 60) + ":" + (Math.floor(s % 60) < 10 ? '0' : '') + Math.floor(s % 60); }
 
     audio.addEventListener('timeupdate', () => {
         if (!isDragging && progressBar) {
             progressBar.style.width = `${(audio.currentTime / audio.duration) * 100}%`;
-            if(timeDisplay) timeDisplay.innerText = `${formatTime(audio.currentTime)} / ${formatTime(audio.duration)}`;
+            if (timeDisplay) timeDisplay.innerText = `${formatTime(audio.currentTime)} / ${formatTime(audio.duration)}`;
         }
     });
 
-    if(progressContainer) {
+    if (progressContainer) {
         progressContainer.addEventListener('mousedown', (e) => { e.stopPropagation(); isDragging = true; });
-        progressContainer.addEventListener('click', (e) => { 
-            e.stopPropagation(); 
+        progressContainer.addEventListener('click', (e) => {
+            e.stopPropagation();
             const rect = progressContainer.getBoundingClientRect();
             audio.currentTime = ((e.clientX - rect.left) / rect.width) * audio.duration;
         });
@@ -215,8 +217,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 progressBar.style.width = `${percent * 100}%`;
             }
         });
-        document.addEventListener('mouseup', (e) => { 
-            if(isDragging) { isDragging = false; }
+        document.addEventListener('mouseup', (e) => {
+            if (isDragging) { isDragging = false; }
         });
     }
 
