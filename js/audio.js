@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const isSubPage = subFolders.some(folder => path.includes(folder));
     const pathPrefix = isSubPage ? '../' : '';
 
-    // === ⚡️ 自动注入播放器 HTML (插座模式 - 左侧布局版) ===
+    // === ⚡️ 自动注入播放器 HTML (插座模式 - 修复版) ===
     function injectAudioPlayer() {
         const slot = document.getElementById('audio-slot');
         if (!slot) return;
@@ -16,8 +16,6 @@ document.addEventListener("DOMContentLoaded", () => {
         slot.innerHTML = `
             <div class="flex items-center gap-6">
                 
-                <div class="h-4 w-[1px] bg-white/20"></div>
-
                 <div class="relative group font-mono" id="audio-console">
                     <div class="relative">
                         <button id="music-trigger" class="flex items-center gap-3 opacity-80 hover:opacity-100 transition-opacity cursor-pointer" onclick="window.toggleMainPlayback()">
