@@ -180,7 +180,7 @@
 
             <div class="h-4 w-[1px] bg-white/20"></div>
 
-            <div class="relative group font-mono" id="audio-console">
+            <div class="relative group font-mono pointer-events-auto" id="audio-console">
                 <div class="relative">
                     <button id="music-trigger"
                         class="flex items-center gap-3 opacity-80 hover:opacity-100 transition-opacity cursor-pointer"
@@ -199,19 +199,22 @@
                     </button>
                     <div id="progress-container"
                         class="absolute bottom-[-5px] left-0 w-full h-[2px] bg-white/20 cursor-pointer hidden hover:h-[4px] transition-all z-50">
-                        <div id="progress-bar" class="h-full bg-accent-blue w-0 relative"></div>
+                        <div id="progress-bar" class="h-full bg-accent-blue w-0 relative">
+                            <div
+                                class="absolute right-0 top-1/2 -translate-y-1/2 w-2 h-2 bg-white rounded-full shadow-[0_0_10px_#00f3ff] opacity-0 group-hover:opacity-100">
+                            </div>
+                        </div>
                     </div>
                 </div>
-
                 <div
                     class="absolute top-full left-0 w-64 pt-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2 pointer-events-none group-hover:pointer-events-auto">
                     <div class="bg-black/95 backdrop-blur-xl border border-white/20 p-2 flex flex-col gap-1 shadow-2xl">
                         <div class="absolute top-0 left-0 w-2 h-2 border-t border-l border-accent-blue"></div>
+                        <div class="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-accent-blue"></div>
                         <div id="playlist-container"></div>
                     </div>
                 </div>
             </div>
-
             <audio id="global-audio"></audio>
         </div>
 

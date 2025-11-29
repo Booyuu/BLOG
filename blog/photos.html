@@ -1,56 +1,139 @@
 <!DOCTYPE html>
 <html lang="zh-CN" class="dark">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BOYU | VISUAL ARCHIVES</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2245%22 fill=%22%23050505%22 stroke=%22white%22 stroke-width=%222%22/><circle cx=%2250%22 cy=%2250%22 r=%2215%22 fill=%22%2300f3ff%22 filter=%22blur(2px)%22/></svg>">
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Rajdhani:wght@500&family=Space+Grotesk:wght@300&display=swap" rel="stylesheet">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2245%22 fill=%22%23050505%22 stroke=%22white%22 stroke-width=%222%22/><circle cx=%2250%22 cy=%2250%22 r=%2215%22 fill=%22%2300f3ff%22 filter=%22blur(2px)%22/></svg>">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Rajdhani:wght@500&family=Space+Grotesk:wght@300&display=swap"
+        rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
-    
+
     <style>
-        body { background-color: #020202; color: #EAEAEA; cursor: auto; } /* 恢复默认光标方便看图 */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #000; }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+        body {
+            background-color: #020202;
+            color: #EAEAEA;
+            cursor: auto;
+        }
+
+        /* 恢复默认光标方便看图 */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #000;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 3px;
+        }
 
         /* 背景星空 (静态图兜底，保证加载快) */
         #bg-layer {
-            position: fixed; inset: 0; z-index: -1;
+            position: fixed;
+            inset: 0;
+            z-index: -1;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E");
             background-color: #050505;
         }
-        
+
         .photo-card {
-            break-inside: avoid; margin-bottom: 2rem; position: relative; group: true;
-            border: 1px solid rgba(255,255,255,0.1); transition: all 0.5s ease;
+            break-inside: avoid;
+            margin-bottom: 2rem;
+            position: relative;
+            group: true;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.5s ease;
         }
-        .photo-card:hover { border-color: #fff; transform: translateY(-5px); }
-        .photo-card img { filter: grayscale(80%); transition: all 0.7s ease; }
-        .photo-card:hover img { filter: grayscale(0%); }
-        
+
+        .photo-card:hover {
+            border-color: #fff;
+            transform: translateY(-5px);
+        }
+
+        .photo-card img {
+            filter: grayscale(80%);
+            transition: all 0.7s ease;
+        }
+
+        .photo-card:hover img {
+            filter: grayscale(0%);
+        }
+
         .overlay-info {
-            position: absolute; bottom: 0; left: 0; width: 100%; padding: 1.5rem;
-            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
-            opacity: 0; transition: opacity 0.3s;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 1.5rem;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
         }
-        .photo-card:hover .overlay-info { opacity: 1; }
+
+        .photo-card:hover .overlay-info {
+            opacity: 1;
+        }
     </style>
 </head>
+
 <body>
     <div id="bg-layer"></div>
 
-    <nav class="fixed top-0 w-full p-8 z-50 flex justify-between items-center mix-blend-difference bg-gradient-to-b from-black/80 to-transparent">
-        <a href="../index.html" class="font-mono text-xs tracking-widest hover:text-white text-gray-400 transition-colors">
+    <nav
+        class="fixed top-0 w-full p-8 z-50 flex justify-between items-center mix-blend-difference bg-gradient-to-b from-black/80 to-transparent">
+        <a href="../index.html"
+            class="font-mono text-xs tracking-widest hover:text-white text-gray-400 transition-colors">
             <i class="ri-arrow-left-line"></i> RETURN TO TERMINAL
         </a>
         <div class="font-serif text-xl tracking-widest text-white">VISUAL LOGS</div>
+        <div class="relative group font-mono pointer-events-auto" id="audio-console">
+            <div class="relative">
+                <button id="music-trigger"
+                    class="flex items-center gap-3 opacity-80 hover:opacity-100 transition-opacity cursor-pointer"
+                    onclick="toggleMainPlayback()">
+                    <div class="flex items-end gap-[2px] h-3" id="master-wave">
+                        <div class="wave-bar w-[2px] h-1 bg-white"></div>
+                        <div class="wave-bar w-[2px] h-2 bg-white"></div>
+                        <div class="wave-bar w-[2px] h-1.5 bg-white"></div>
+                        <div class="wave-bar w-[2px] h-3 bg-white"></div>
+                    </div>
+                    <div class="flex flex-col leading-none text-left">
+                        <span class="text-[10px] tracking-widest text-white truncate max-w-[120px]"
+                            id="current-track-name">AUDIO OFF</span>
+                        <span id="time-display" class="text-[8px] text-dim mt-1 hidden">0:00 / 0:00</span>
+                    </div>
+                </button>
+                <div id="progress-container"
+                    class="absolute bottom-[-5px] left-0 w-full h-[2px] bg-white/20 cursor-pointer hidden hover:h-[4px] transition-all z-50">
+                    <div id="progress-bar" class="h-full bg-accent-blue w-0 relative">
+                        <div
+                            class="absolute right-0 top-1/2 -translate-y-1/2 w-2 h-2 bg-white rounded-full shadow-[0_0_10px_#00f3ff] opacity-0 group-hover:opacity-100">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div
+                class="absolute top-full left-0 w-64 pt-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2 pointer-events-none group-hover:pointer-events-auto">
+                <div class="bg-black/95 backdrop-blur-xl border border-white/20 p-2 flex flex-col gap-1 shadow-2xl">
+                    <div class="absolute top-0 left-0 w-2 h-2 border-t border-l border-accent-blue"></div>
+                    <div class="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-accent-blue"></div>
+                    <div id="playlist-container"></div>
+                </div>
+            </div>
+        </div>
+        <audio id="global-audio"></audio>
     </nav>
 
     <main class="max-w-[1600px] mx-auto px-4 md:px-8 pt-32 pb-20">
         <div class="columns-1 md:columns-2 lg:columns-3 gap-8">
-            
+
             <div class="photo-card">
                 <img src="https://images.unsplash.com/photo-1476610182048-b716b8518aae?q=80&w=1000" class="w-full">
                 <div class="overlay-info">
@@ -75,8 +158,9 @@
                 </div>
             </div>
 
-            </div>
+        </div>
     </main>
 
 </body>
+
 </html>

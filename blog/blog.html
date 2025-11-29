@@ -76,13 +76,14 @@
 
     <nav class="fixed top-0 w-full p-8 z-50 flex justify-between items-center mix-blend-difference">
 
-        <a href="../index.html" class="font-mono text-xs tracking-widest hover:text-white text-gray-400 transition-colors">
+        <a href="../index.html"
+            class="font-mono text-xs tracking-widest hover:text-white text-gray-400 transition-colors">
             <i class="ri-arrow-left-line"></i> RETURN TO BASE
         </a>
 
         <div class="font-serif text-xl tracking-widest text-white hidden md:block">PLANETARY LOGS</div>
 
-        <div class="relative group font-mono" id="audio-console">
+        <div class="relative group font-mono pointer-events-auto" id="audio-console">
             <div class="relative">
                 <button id="music-trigger"
                     class="flex items-center gap-3 opacity-80 hover:opacity-100 transition-opacity cursor-pointer"
@@ -108,9 +109,8 @@
                     </div>
                 </div>
             </div>
-
             <div
-                class="absolute top-full right-0 w-64 pt-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2 pointer-events-none group-hover:pointer-events-auto">
+                class="absolute top-full left-0 w-64 pt-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2 pointer-events-none group-hover:pointer-events-auto">
                 <div class="bg-black/95 backdrop-blur-xl border border-white/20 p-2 flex flex-col gap-1 shadow-2xl">
                     <div class="absolute top-0 left-0 w-2 h-2 border-t border-l border-accent-blue"></div>
                     <div class="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-accent-blue"></div>
@@ -118,7 +118,6 @@
                 </div>
             </div>
         </div>
-
         <audio id="global-audio"></audio>
 
     </nav>
@@ -182,7 +181,7 @@
         gsap.from("article", { x: -30, opacity: 0, duration: 0.8, stagger: 0.3, delay: 0.5, ease: "power2.out" });
         gsap.from(".timeline-dot", { scale: 0, duration: 0.5, stagger: 0.3, delay: 0.7, ease: "back.out(1.7)" });
     </script>
-    
+
     <script src="../js/audio.js"></script>
 </body>
 
