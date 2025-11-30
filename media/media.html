@@ -58,49 +58,35 @@
         }
 
         /* 样式 */
-        .mega-title {
-            font-family: 'Cinzel', serif;
-            font-size: 10vw;
-            line-height: 0.8;
-            color: transparent;
-            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.8);
-            opacity: 0.5;
+        /* 书籍卡片样式优化 */
+        .book-card { display: flex; gap: 24px; align-items: flex-start; border-bottom: 1px solid rgba(255,255,255,0.1); padding: 2rem 0; transition: all 0.3s; cursor: pointer; }
+        .book-card:hover { padding-left: 20px; border-color: #fff; }
+        
+        /* 封面样式 */
+        .book-cover { 
+            width: 90px; height: 130px; background: #111; border: 1px solid #333; 
+            transition: all 0.3s; position: relative; overflow: hidden; flex-shrink: 0;
         }
+        .book-cover img {
+            width: 100%; height: 100%; object-fit: cover;
+            filter: grayscale(100%); transition: all 0.5s ease;
+        }
+        .book-card:hover .book-cover { border-color: #fff; box-shadow: 0 0 20px rgba(255,255,255,0.1); }
+        .book-card:hover .book-cover img { filter: grayscale(0%); transform: scale(1.05); }
+        
+        /* 书脊线 (装饰) */
+        .book-cover::after { 
+            content: ''; position: absolute; left: 4px; top: 0; width: 1px; height: 100%; 
+            background: rgba(255,255,255,0.3); z-index: 10; pointer-events: none;
+        }
+        
+        .music-card { background: rgba(255,255,255,0.03); padding: 1.5rem; border: 1px solid rgba(255,255,255,0.05); transition: all 0.3s; display: flex; align-items: center; gap: 1.5rem; }
+        .music-card:hover { background: rgba(255,255,255,0.08); border-color: #00f3ff; transform: translateY(-5px); }
+        .album-art { width: 60px; height: 60px; background: #222; border-radius: 50%; animation: spin 10s linear infinite; animation-play-state: paused; background-size: cover; }
+        .music-card:hover .album-art { animation-play-state: running; box-shadow: 0 0 15px #00f3ff; }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        .book-card {
-            display: flex;
-            gap: 20px;
-            align-items: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 2rem 0;
-            transition: all 0.3s;
-            cursor: pointer;
-        }
 
-        .book-card:hover {
-            padding-left: 20px;
-            border-color: #fff;
-        }
-
-        .book-cover {
-            width: 80px;
-            height: 110px;
-            background: #111;
-            border: 1px solid #333;
-            transition: all 0.3s;
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: 'Cinzel';
-            font-size: 2rem;
-            color: #333;
-        }
-
-        .book-card:hover .book-cover {
-            border-color: #fff;
-            color: #fff;
-        }
 
         /* === 🎵 音乐波形动画 (补丁) === */
         .wave-bar {
@@ -309,7 +295,7 @@
             });
 
             // 音乐卡片动画
-            ScrollTrigger.batch(".music-card", {
+            ScrollTrigger.batch("music-card", {
                 onEnter: batch => gsap.to(batch, { opacity: 1, y: 0, duration: 0.8, stagger: 0.15, ease: "power2.out" }),
                 start: "top 90%",
                 once: true
