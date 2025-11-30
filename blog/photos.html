@@ -5,36 +5,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BOYU | VISUAL ARCHIVES</title>
+
     <link rel="icon"
         href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2245%22 fill=%22%23050505%22 stroke=%22white%22 stroke-width=%222%22/><circle cx=%2250%22 cy=%2250%22 r=%2215%22 fill=%22%2300f3ff%22 filter=%22blur(2px)%22/></svg>">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Rajdhani:wght@500&family=Space+Grotesk:wght@300&display=swap"
-        rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Space+Grotesk:wght@300;500&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
     <style>
         body {
             background-color: #020202;
             color: #EAEAEA;
-            cursor: auto;
+            overflow-x: hidden;
         }
 
-        /* 恢复默认光标方便看图 */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
 
-        ::-webkit-scrollbar-track {
-            background: #000;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #333;
-            border-radius: 3px;
-        }
-
-        /* 背景星空 (静态图兜底，保证加载快) */
+        /* 背景噪点 */
         #bg-layer {
             position: fixed;
             inset: 0;
@@ -43,140 +35,158 @@
             background-color: #050505;
         }
 
+        /* 左侧固定栏 */
+        aside {
+            backdrop-filter: blur(6px);
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        /* 图片卡片 */
         .photo-card {
             break-inside: avoid;
             margin-bottom: 2rem;
             position: relative;
-            group: true;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.5s ease;
-        }
-
-        .photo-card:hover {
-            border-color: #fff;
-            transform: translateY(-5px);
-        }
-
-        .photo-card img {
-            filter: grayscale(80%);
-            transition: all 0.7s ease;
-        }
-
-        .photo-card:hover img {
-            filter: grayscale(0%);
-        }
-
-        .overlay-info {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            padding: 1.5rem;
-            background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+            cursor: zoom-in;
             opacity: 0;
-            transition: opacity 0.3s;
+            transform: translateY(20px);
         }
 
-        .photo-card:hover .overlay-info {
-            opacity: 1;
+        .photo-img {
+            width: 100%;
+            border-radius: 6px;
+            object-fit: cover;
+            transition: all 0.5s ease;
+            filter: grayscale(60%);
         }
 
-        /* === 🎵 音乐波形动画 (补丁) === */
+        .photo-card:hover .photo-img {
+            filter: grayscale(0%);
+            transform: scale(1.02);
+        }
+
+        /* Lightbox */
+        #lightbox {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 9999;
+        }
+
+        #lightbox-img {
+            max-width: 90%;
+            max-height: 90%;
+            margin: auto;
+            display: block;
+            border-radius: 4px;
+        }
+
+        /* 音乐波形动画 */
         .wave-bar {
             transition: all 0.2s ease;
             transform-origin: bottom;
         }
+        .playing .wave-bar { animation: sound-wave 0.8s infinite alternate ease-in-out; background: #00f3ff !important; }
+        .playing .wave-bar:nth-child(2) { animation-delay: 0.1s; }
+        .playing .wave-bar:nth-child(3) { animation-delay: 0.2s; }
+        .playing .wave-bar:nth-child(4) { animation-delay: 0.3s; }
 
-        /* 播放时跳动 */
-        .playing .wave-bar {
-            animation: sound-wave 0.8s infinite ease-in-out alternate;
-            background-color: #00f3ff !important;
-        }
-
-        /* 错开节奏 */
-        .playing .wave-bar:nth-child(1) {
-            animation-delay: 0.0s;
-        }
-
-        .playing .wave-bar:nth-child(2) {
-            animation-delay: 0.1s;
-        }
-
-        .playing .wave-bar:nth-child(3) {
-            animation-delay: 0.2s;
-        }
-
-        .playing .wave-bar:nth-child(4) {
-            animation-delay: 0.3s;
-        }
-
-        @keyframes sound-wave {
-            0% {
-                height: 2px;
-            }
-
-            100% {
-                height: 12px;
-            }
-        }
+        @keyframes sound-wave { from { height: 2px; } to { height: 12px; } }
     </style>
 </head>
 
 <body>
     <div id="bg-layer"></div>
 
+    <!-- 顶部导航（播放器保留） -->
     <nav class="fixed top-0 w-full p-8 z-50 flex justify-between items-center mix-blend-difference pointer-events-none">
-
         <div class="pointer-events-auto flex items-center gap-6">
-
             <a href="../index.html"
-                class="font-mono text-xs tracking-widest hover:text-white text-gray-400 transition-colors group flex items-center gap-2"
-                data-i18n="nav.back">
-                <i class="ri-arrow-left-line group-hover:-translate-x-1 transition-transform"></i> RETURN TO BASE
+               class="font-mono text-xs tracking-widest hover:text-white text-gray-400 transition-colors group flex items-center gap-2">
+               <i class="ri-arrow-left-line group-hover:-translate-x-1 transition-transform"></i> RETURN TO BASE
             </a>
 
             <div class="h-4 w-[1px] bg-white/20"></div>
 
             <div id="audio-slot"></div>
-
         </div>
-        
         <div></div>
-
     </nav>
 
-    <main class="max-w-[1600px] mx-auto px-4 md:px-8 pt-32 pb-20">
-        <div class="columns-1 md:columns-2 lg:columns-3 gap-8">
+    <!-- 左侧信息栏 -->
+    <aside class="fixed left-0 top-0 h-full w-64 p-12 border-r border-white/10 flex flex-col justify-between">
+        <div>
+            <h1 class="font-serif text-4xl text-white mb-4 leading-tight">VISUAL<br>ARCHIVES</h1>
+            <p class="font-mono text-[11px] text-gray-400 leading-relaxed">
+                Moments captured across timelines, cities, and hidden sectors.
+            </p>
+        </div>
 
+        <p class="font-mono text-[10px] text-gray-500 tracking-widest">
+            SECTOR 07 // MEMORY STORAGE
+        </p>
+    </aside>
+
+    <!-- 右侧图片瀑布流 -->
+    <main class="ml-64 px-10 pt-28 pb-20">
+        <div class="columns-1 md:columns-2 lg:columns-3 gap-8" id="gallery">
+
+            <!-- 1 -->
             <div class="photo-card">
-                <img src="https://images.unsplash.com/photo-1476610182048-b716b8518aae?q=80&w=1000" class="w-full">
-                <div class="overlay-info">
-                    <h3 class="font-serif text-xl text-white">ICELANDIC HIGHLANDS</h3>
-                    <p class="font-mono text-[10px] text-gray-400 mt-1">ISO 100 · f/8 · 24mm</p>
-                </div>
+                <img src="https://images.unsplash.com/photo-1476610182048-b716b8518aae?q=80&w=1000" class="photo-img">
             </div>
 
+            <!-- 2 -->
             <div class="photo-card">
-                <img src="https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?q=80&w=1000" class="w-full">
-                <div class="overlay-info">
-                    <h3 class="font-serif text-xl text-white">THE VOID</h3>
-                    <p class="font-mono text-[10px] text-gray-400 mt-1">ISO 400 · f/2.8 · 50mm</p>
-                </div>
+                <img src="https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?q=80&w=1000" class="photo-img">
             </div>
 
+            <!-- 3 -->
             <div class="photo-card">
-                <img src="https://images.unsplash.com/photo-1536431311719-398b670a9e6d?q=80&w=1000" class="w-full">
-                <div class="overlay-info">
-                    <h3 class="font-serif text-xl text-white">NEON NIGHTS</h3>
-                    <p class="font-mono text-[10px] text-gray-400 mt-1">TOKYO // SECTOR 04</p>
-                </div>
+                <img src="https://images.unsplash.com/photo-1536431311719-398b670a9e6d?q=80&w=1000" class="photo-img">
             </div>
 
         </div>
     </main>
 
+    <!-- Lightbox -->
+    <div id="lightbox">
+        <img id="lightbox-img">
+    </div>
+
+    <!-- Lightbox Script -->
+    <script>
+        document.querySelectorAll(".photo-img").forEach(img => {
+            img.addEventListener("click", () => {
+                document.getElementById("lightbox-img").src = img.src;
+                document.getElementById("lightbox").style.display = "flex";
+            });
+        });
+
+        document.getElementById("lightbox").addEventListener("click", () => {
+            document.getElementById("lightbox").style.display = "none";
+        });
+    </script>
+
+    <!-- 图片进入动画 -->
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+
+        gsap.utils.toArray(".photo-card").forEach(item => {
+            gsap.to(item, {
+                opacity: 1,
+                y: 0,
+                duration: 1,
+                ease: "power3.out",
+                scrollTrigger: {
+                    trigger: item,
+                    start: "top 90%",
+                }
+            });
+        });
+    </script>
+
     <script src="../js/audio.js"></script>
 
 </body>
-
 </html>
