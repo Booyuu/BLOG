@@ -4,32 +4,95 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BOYU | The Future of Algorithmic Art</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2245%22 fill=%22%23050505%22 stroke=%22white%22 stroke-width=%222%22/><circle cx=%2250%22 cy=%2250%22 r=%2215%22 fill=%22%2300f3ff%22 filter=%22blur(2px)%22/></svg>">
+    
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Rajdhani:wght@500&family=Space+Grotesk:wght@300;500&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        bg: '#050505',
+                        'accent-blue': '#00f3ff',
+                        'accent-red': '#ff2a2a',
+                    },
+                    fontFamily: {
+                        serif: ['"Cinzel"', 'serif'],
+                        mono: ['"Space Grotesk"', 'monospace'],
+                        sans: ['"Inter"', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
     <style>
         body { background-color: #020202; color: #EAEAEA; font-family: 'Inter', sans-serif; }
-        /* 继承星空背景 (静态图兜底，防止文章页太重) */
-        #bg { position: fixed; inset: 0; z-index: -1; background: #050505; }
-        .stars { position: absolute; width: 1px; height: 1px; background: transparent; box-shadow: 10px 10px white, 20px 50px white, 100px 80px white; animation: animStar 50s linear infinite; } 
-        /* 简单模拟星空，避免每个页面都加载 Three.js */
-        
-        .article-container { max-width: 800px; margin: 0 auto; padding: 120px 20px; position: relative; z-index: 10; }
+        ::-webkit-scrollbar { width: 0; }
+
+        /* 1. 静态星空背景 (轻量化) */
+        #bg-layer {
+            position: fixed; inset: 0; z-index: -1;
+            background-color: #050505;
+            /* 使用噪点图模拟星空质感 */
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.07'/%3E%3C/svg%3E");
+        }
+
+        /* 2. 音乐波形动画 */
+        .wave-bar { transition: all 0.2s ease; transform-origin: bottom; }
+        .playing .wave-bar { 
+            animation: sound-wave 0.8s infinite ease-in-out alternate; 
+            background-color: #00f3ff !important; 
+        }
+        .playing .wave-bar:nth-child(1) { animation-delay: 0.0s; }
+        .playing .wave-bar:nth-child(2) { animation-delay: 0.1s; }
+        .playing .wave-bar:nth-child(3) { animation-delay: 0.2s; }
+        .playing .wave-bar:nth-child(4) { animation-delay: 0.3s; }
+        @keyframes sound-wave { 0% { height: 2px; } 100% { height: 12px; } }
+
+        /* 3. 滑块样式 */
+        .lang-switch-container { cursor: pointer; position: relative; width: 64px; height: 24px; pointer-events: auto; }
+        .lang-track { position: relative; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 2px; display: flex; justify-content: space-between; align-items: center; padding: 0 8px; box-shadow: inset 0 0 10px rgba(0,0,0,0.5); }
+        .lang-text { font-family: 'Space Grotesk', monospace; font-size: 10px; font-weight: bold; color: #666; z-index: 10; pointer-events: none; }
+        .lang-glider { position: absolute; top: 2px; left: 2px; width: 30px; height: 18px; background: #fff; transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55); z-index: 5; mix-blend-mode: screen; }
+        .lang-zh-mode .lang-glider { transform: translateX(28px); background: #00f3ff; box-shadow: 0 0 15px #00f3ff; }
+
+        /* 文章样式 */
+        .article-container { max-width: 800px; margin: 0 auto; padding: 150px 20px 100px; position: relative; z-index: 10; }
         h1 { font-family: 'Cinzel', serif; color: #fff; font-size: 3rem; margin-bottom: 1rem; line-height: 1.2; }
         .meta { font-family: 'Space Grotesk', monospace; color: #888; font-size: 0.9rem; margin-bottom: 3rem; border-bottom: 1px solid #333; padding-bottom: 2rem; }
-        
-        /* 正文样式 */
         .prose p { margin-bottom: 1.5rem; line-height: 1.8; color: #ccc; font-size: 1.1rem; }
         .prose h2 { font-family: 'Rajdhani', sans-serif; color: #fff; font-size: 1.8rem; margin-top: 3rem; margin-bottom: 1rem; }
-        .prose img { width: 100%; border-radius: 4px; border: 1px solid #333; margin: 2rem 0; }
-        
-        .back-btn { position: fixed; top: 30px; left: 30px; font-family: 'Space Grotesk'; color: #888; text-decoration: none; border: 1px solid #333; padding: 8px 16px; transition: 0.3s; z-index: 50; }
-        .back-btn:hover { border-color: #fff; color: #fff; background: rgba(255,255,255,0.1); }
+        .prose img { width: 100%; border-radius: 4px; border: 1px solid #333; margin: 2rem 0; opacity: 0.9; }
     </style>
 </head>
 <body>
-    <div id="bg"></div>
-    <a href="../index.html" class="back-btn">← BACK TO TERMINAL</a>
+
+    <div id="bg-layer"></div>
+
+    <nav class="fixed top-0 w-full p-8 z-50 flex justify-between items-center mix-blend-difference pointer-events-none">
+        
+        <div class="pointer-events-auto flex items-center gap-6">
+            <a href="../index.html" class="font-mono text-xs tracking-widest hover:text-white text-gray-400 transition-colors group flex items-center gap-2" data-i18n="nav.back">
+                <i class="ri-arrow-left-line group-hover:-translate-x-1 transition-transform"></i> RETURN TO BASE
+            </a>
+            <div class="h-4 w-[1px] bg-white/20"></div>
+            <div id="audio-slot"></div>
+        </div>
+
+        <div class="pointer-events-auto">
+            <div class="lang-switch-container" onclick="toggleLanguage()">
+                <div class="lang-track">
+                    <span class="lang-text left" style="color: #000;">EN</span>
+                    <span class="lang-text right">CN</span>
+                    <div class="lang-glider"></div>
+                </div>
+            </div>
+        </div>
+    </nav>
 
     <article class="article-container">
         <h1>The Future of Algorithmic Art</h1>
@@ -49,29 +112,30 @@
         </div>
 
         <div class="mt-20 pt-10 border-t border-white/10">
-        <h3 class="font-family: 'Rajdhani'; text-white text-xl mb-8 tracking-widest">
-            SIGNAL TRANSMISSION // COMMENTS
-        </h3>
-        
-        <script src="https://giscus.app/client.js"
-                data-repo="Booyuu/booyuu.github.io"
-                data-repo-id="R_kgDOQec4bQ"
-                data-category="Announcements"
-                data-category-id="DIC_kwDOQec4bc4CzKXL"
-                data-mapping="pathname"
-                data-strict="0"
-                data-reactions-enabled="1"
-                data-emit-metadata="0"
-                data-input-position="bottom"
-                data-theme="transparent_dark"
-                data-lang="zh-CN"
-                data-loading="lazy"
-                crossorigin="anonymous"
-                async>
-        </script>
-
-        <script src="../js/lang.js"></script>
-    </div>
+            <h3 class="font-family: 'Rajdhani'; color: white; font-size: 1.25rem; margin-bottom: 2rem; letter-spacing: 0.1em;">
+                SIGNAL TRANSMISSION // COMMENTS
+            </h3>
+            <script src="https://giscus.app/client.js"
+                    data-repo="Booyuu/booyuu.github.io"
+                    data-repo-id="R_kgDOQec4bQ"
+                    data-category="Announcements"
+                    data-category-id="DIC_kwDOQec4bc4CzKXL"
+                    data-mapping="pathname"
+                    data-strict="0"
+                    data-reactions-enabled="1"
+                    data-emit-metadata="0"
+                    data-input-position="bottom"
+                    data-theme="transparent_dark"
+                    data-lang="zh-CN"
+                    data-loading="lazy"
+                    crossorigin="anonymous"
+                    async>
+            </script>
+        </div>
     </article>
+
+    <script src="js/lang.js"></script>
+    <script src="js/audio.js"></script>
+
 </body>
 </html>
