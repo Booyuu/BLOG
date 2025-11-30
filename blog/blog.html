@@ -5,9 +5,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BOYU | CHRONOLOGY</title>
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2245%22 fill=%22%23050505%22 stroke=%22white%22 stroke-width=%222%22/><circle cx=%2250%22 cy=%2250%22 r=%2215%22 fill=%22%2300f3ff%22 filter=%22blur(2px)%22/></svg>">
 
     <!-- 字体 -->
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Space+Grotesk:wght@300;500&family=Inter:wght@300;600&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Space+Grotesk:wght@300;500&family=Inter:wght@300;600&display=swap"
+        rel="stylesheet">
 
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -29,7 +33,9 @@
             font-family: 'Inter', sans-serif;
         }
 
-        ::-webkit-scrollbar { width: 0; }
+        ::-webkit-scrollbar {
+            width: 0;
+        }
 
         /* 星空背景 */
         #canvas-container {
@@ -50,7 +56,7 @@
 
         /* 时间轴优化 */
         .timeline-column {
-            border-left: 1px solid rgba(255,255,255,0.08);
+            border-left: 1px solid rgba(255, 255, 255, 0.08);
             position: relative;
         }
 
@@ -94,7 +100,7 @@
         .entry-scan {
             position: absolute;
             inset: 0;
-            background: linear-gradient(90deg, transparent 0%, rgba(0,243,255,0.1) 50%, transparent 100%);
+            background: linear-gradient(90deg, transparent 0%, rgba(0, 243, 255, 0.1) 50%, transparent 100%);
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.3s ease;
@@ -102,6 +108,45 @@
 
         .entry-card:hover .entry-scan {
             opacity: 1;
+        }
+
+        /* === 🎵 音乐波形动画 (补丁) === */
+        .wave-bar {
+            transition: all 0.2s ease;
+            transform-origin: bottom;
+        }
+
+        /* 播放时跳动 */
+        .playing .wave-bar {
+            animation: sound-wave 0.8s infinite ease-in-out alternate;
+            background-color: #00f3ff !important;
+        }
+
+        /* 错开节奏 */
+        .playing .wave-bar:nth-child(1) {
+            animation-delay: 0.0s;
+        }
+
+        .playing .wave-bar:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+
+        .playing .wave-bar:nth-child(3) {
+            animation-delay: 0.2s;
+        }
+
+        .playing .wave-bar:nth-child(4) {
+            animation-delay: 0.3s;
+        }
+
+        @keyframes sound-wave {
+            0% {
+                height: 2px;
+            }
+
+            100% {
+                height: 12px;
+            }
         }
     </style>
 </head>
@@ -115,7 +160,8 @@
     <nav class="fixed top-0 w-full p-8 z-50 flex justify-between items-center mix-blend-difference pointer-events-none">
 
         <div class="pointer-events-auto flex items-center gap-6">
-            <a href="../index.html" class="font-mono text-xs tracking-widest text-gray-400 hover:text-white transition-colors group flex items-center gap-2">
+            <a href="../index.html"
+                class="font-mono text-xs tracking-widest text-gray-400 hover:text-white transition-colors group flex items-center gap-2">
                 <i class="ri-arrow-left-line group-hover:-translate-x-1 transition-transform"></i>
                 RETURN TO BASE
             </a>
@@ -145,7 +191,8 @@
         <section class="timeline-column pl-12 md:pl-20">
 
             <!-- 年份标签 -->
-            <div class="font-mono text-5xl text-white/10 absolute -left-14 md:-left-20 top-0 rotate-90 origin-top-left select-none">
+            <div
+                class="font-mono text-5xl text-white/10 absolute -left-14 md:-left-20 top-0 rotate-90 origin-top-left select-none">
                 2025
             </div>
 
@@ -169,7 +216,8 @@
                         探索生成式艺术在现代网页设计中的应用。代码如何成为新的画笔，创造出不可预测的数字景观。
                     </p>
 
-                    <div class="mt-6 flex items-center gap-2 text-xs font-mono text-accent-blue opacity-0 group-hover:opacity-100 transition-all">
+                    <div
+                        class="mt-6 flex items-center gap-2 text-xs font-mono text-accent-blue opacity-0 group-hover:opacity-100 transition-all">
                         READ LOG <i class="ri-arrow-right-line"></i>
                     </div>
                 </article>
@@ -191,7 +239,8 @@
                         在下行周期寻找确定性机会的交易观察。如何在市场恐慌中保持认知稳定并执行体系。
                     </p>
 
-                    <div class="mt-6 flex items-center gap-2 text-xs font-mono text-accent-red opacity-0 group-hover:opacity-100 transition-all">
+                    <div
+                        class="mt-6 flex items-center gap-2 text-xs font-mono text-accent-red opacity-0 group-hover:opacity-100 transition-all">
                         ACCESS DENIED <i class="ri-lock-line"></i>
                     </div>
                 </article>
@@ -223,8 +272,8 @@
         const pos = new Float32Array(count * 3);
         for (let i = 0; i < pos.length; i += 3) {
             pos[i] = (Math.random() - 0.5) * 1200;
-            pos[i+1] = (Math.random() - 0.5) * 1200;
-            pos[i+2] = (Math.random() - 0.5) * 1200;
+            pos[i + 1] = (Math.random() - 0.5) * 1200;
+            pos[i + 2] = (Math.random() - 0.5) * 1200;
         }
         geometry.setAttribute("position", new THREE.BufferAttribute(pos, 3));
         const material = new THREE.PointsMaterial({ size: 1, color: 0x888888 });
@@ -245,4 +294,5 @@
     <script src="../js/audio.js"></script>
 
 </body>
+
 </html>
