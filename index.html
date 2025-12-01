@@ -1672,27 +1672,42 @@
         // ⚠️⚠️⚠️ 这里填你第二次部署的新合约地址！ ⚠️⚠️⚠️
         const TOKEN_CONTRACT_ADDRESS = "0x93b22384DD319e68d09f6762F5Ce6B89Db2Ee633";
 
-        // 1. 领币函数 (纯净版：自动计算 Gas)
+        // 1. 领币函数 (强制锁网版)
         async function claimTokens() {
             const btn = document.getElementById('claimBtn');
             const status = document.getElementById('claimStatus');
 
             if (!window.ethereum) return alert("Please install wallet!");
 
-            try {
-                // 强制切换到 Sepolia (防止你还在主网)
-                await window.ethereum.request({
-                    method: 'wallet_switchEthereumChain',
-                    params: [{ chainId: '0xaa36a7' }],
-                });
+            // 👇👇👇 第一步：先检查网络，不对就强制切 👇👇👇
+            const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+            
+            // 0xaa36a7 是 Sepolia 的身份证号
+            if (chainId !== '0xaa36a7') {
+                try {
+                    await window.ethereum.request({
+                        method: 'wallet_switchEthereumChain',
+                        params: [{ chainId: '0xaa36a7' }],
+                    });
+                } catch (switchError) {
+                    // 如果切换失败 (比如用户没有添加Sepolia)，报错
+                    console.error(switchError);
+                    return alert("网络错误！\n请打开 MetaMask，手动切换到 'Sepolia' 测试网再试。");
+                }
+            }
+            // 👆👆👆 锁网结束 👆👆👆
 
+            try {
+                // 合约地址 (请再次确认这里是你最新的那个合约地址)
+                // const TOKEN_CONTRACT_ADDRESS = "0x..." 
+                
                 const DATA_HEX = "0x48c54b9d"; // claimTokens()
 
                 status.innerText = "Processing request...";
                 btn.disabled = true;
                 btn.classList.add('opacity-50');
 
-                // 👇 核心修改：没有 gas 参数，完全交给钱包计算
+                // 发起交易 (不带 gas 参数，让钱包在 Sepolia 上自动算)
                 const txHash = await window.ethereum.request({
                     method: 'eth_sendTransaction',
                     params: [{
@@ -1705,7 +1720,7 @@
                 console.log("Tx Hash:", txHash);
                 status.innerText = "MINTING... Please wait.";
                 status.style.color = "#00f3ff";
-
+                
                 setTimeout(() => {
                     status.innerText = "SUCCESS! Check your wallet.";
                     status.style.color = "#00ff00";
@@ -1718,10 +1733,6 @@
                 status.style.color = "red";
                 btn.disabled = false;
                 btn.classList.remove('opacity-50');
-
-                // 再次提示
-                if (error.code === 4902) alert("请先在 MetaMask 添加 Sepolia 网络！");
-                else if (error.message && error.message.includes("insufficient funds")) alert("余额依然不足？请检查：\n1. 你的钱包是否连接了有钱的那个账号？\n2. 你是否已经在 Sepolia 测试网？");
             }
         }
     </script>
