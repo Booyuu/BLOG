@@ -1,4 +1,4 @@
-# 🌌 BOYU | EVENT HORIZON
+# 🌌 Mindscape
 
 ![Project Status](https://img.shields.io/badge/Status-Active-brightgreen)
 ![License](https://img.shields.io/badge/License-MIT-blue)
