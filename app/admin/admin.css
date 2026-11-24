@@ -100,3 +100,21 @@
   .admin-stage .admin-public { position: absolute; right: 1rem; top: 3.5rem; font-size: .8rem; }
   .admin-stage .account-actions { flex-wrap: wrap; justify-content: flex-start; }
 }
+
+.editor-toolbar, .body-view-options { display: flex; flex-wrap: wrap; gap: .4rem; }
+.editor-toolbar { justify-content: space-between; align-items: center; gap: .65rem; }
+.admin-stage .body-view-options button[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); }
+.editor-body { display: grid; gap: 1rem; min-width: 0; }
+.editor-body[data-view="split"] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.editor-source, .editor-rendered { min-width: 0; display: grid; gap: .4rem; }
+.editor-source[hidden] { display: none; }
+.admin-stage .editor-rendered h2 { font: inherit; }
+.editor-body[data-view="split"] :is(textarea, .preview) { height: clamp(22rem, 61vh, 38rem); }
+.editor-body .preview { background: #0008; border-radius: 0; }
+.editor-body[data-view="split"] .preview { overflow: auto; }
+.editor-body[data-view="preview"] .preview { max-width: 52rem; }
+.editor-body .preview img { max-width: 100%; }
+@media (max-width: 767px) {
+  .editor-body[data-view="split"] { grid-template-columns: 1fr; }
+  .editor-body[data-view="split"] .preview { height: auto; overflow: visible; }
+}
