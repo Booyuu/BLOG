@@ -1,4 +1,5 @@
 import './style.css';
+import './components/mindscape.css';
 import { siteUrl } from '../lib/site';
 
 export const metadata = {

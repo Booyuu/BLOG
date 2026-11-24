@@ -1,20 +1,16 @@
-import Link from 'next/link';
+import Script from 'next/script';
 import BlogAnalytics from './analytics';
+import './legacy-blog.css';
 
 export default function BlogLayout({ children }) {
-  return <>
+  return <div className="legacy-blog mindscape-type">
     <BlogAnalytics />
-    <header className="site-header">
-      <nav className="shell navigation" aria-label="主导航">
-        <a className="wordmark" href="/">Boyu<span>.</span></a>
-        <div className="links">
-          <Link href="/blog" aria-current="page">文章</Link>
-          <a href="/blog/photos.html">相册</a>
-          <a href="/travel/travel.html">旅行</a>
-        </div>
-      </nav>
-    </header>
+    <nav className="legacy-nav" aria-label="博客导航">
+      <a href="/"><span aria-hidden="true">←</span> RETURN TO BASE</a>
+      <span className="legacy-nav-divider" aria-hidden="true" />
+      <div id="audio-slot" />
+    </nav>
     {children}
-    <footer className="shell site-footer"><a href="/">Boyu 的主页</a><Link href="/blog">文章归档</Link></footer>
-  </>;
+    <Script src="/js/audio.js" strategy="afterInteractive" />
+  </div>;
 }

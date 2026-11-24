@@ -1,9 +1,9 @@
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { cache } from 'react';
+import MindscapeBackdrop from '../../components/mindscape-backdrop';
 import { publishedPosts } from '../../../lib/content';
 import { renderMarkdown } from '../../../lib/markdown';
-import { articleDate, slugPattern } from '../../../lib/site';
+import { displayCategory, legacyArticleDate, slugPattern } from '../../../lib/site';
 
 export const dynamic = 'force-dynamic';
 const findPost = cache(async (slug) => slugPattern.test(slug)
@@ -32,16 +32,18 @@ export default async function PostPage({ params }) {
   const { slug } = await params;
   const post = await findPost(slug);
   if (!post) notFound();
-  return <main className="shell article-shell">
-    <Link className="back" href="/blog">返回文章列表</Link>
+  return <main className="legacy-reading">
+    <MindscapeBackdrop variant="article" />
     <article>
-      <header className="article-header">
-        <div className="post-meta"><span>{post.category}</span><time dateTime={post.publishedAt}>{articleDate(post.publishedAt)}</time></div>
-        <h1>{post.title}</h1>
-        {post.description && <p>{post.description}</p>}
-      </header>
+      <h1>{post.title}</h1>
+      <div className="legacy-post-meta">
+        <span>DATE: <time dateTime={post.publishedAt}>{legacyArticleDate(post.publishedAt)}</time></span>
+        <span aria-hidden="true">/</span>
+        <span>CATEGORY: {displayCategory(post.category) === '随笔' ? 'THOUGHTS' : displayCategory(post.category)}</span>
+      </div>
       {post.cover && <img className="article-cover" src={post.cover} alt="" />}
-      <div className="prose" dangerouslySetInnerHTML={{ __html: renderMarkdown(post.markdown) }} />
+      <div className="prose legacy-prose" dangerouslySetInnerHTML={{ __html: renderMarkdown(post.markdown) }} />
+      <a className="legacy-reading-back" href="/blog">返回文章列表</a>
     </article>
   </main>;
 }
