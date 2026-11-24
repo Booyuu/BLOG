@@ -60,6 +60,22 @@ export default function SitePlayer({ language, rememberedLanguage }) {
   }, []);
 
   useEffect(() => {
+    function changeFromHome(event) {
+      const frame = document.querySelector('.mindscape-home-frame');
+      if (event.origin !== location.origin || event.source !== frame?.contentWindow) return;
+      const value = event.data?.mindscapeLanguage;
+      if (value === 'zh' || value === 'en') applyLanguage(value);
+    }
+    window.addEventListener('message', changeFromHome);
+    return () => window.removeEventListener('message', changeFromHome);
+  }, [router]);
+
+  useEffect(() => {
+    const frame = document.querySelector('.mindscape-home-frame');
+    frame?.contentWindow?.postMessage({ mindscapeLocale: locale }, location.origin);
+  }, [locale]);
+
+  useEffect(() => {
     const saved = document.cookie.match(/(?:^|;\s*)mindscape_lang=(zh|en)(?:;|$)/)?.[1] ?? language;
     setLocale(saved);
     document.documentElement.lang = saved === 'zh' ? 'zh-CN' : 'en';
@@ -87,7 +103,7 @@ export default function SitePlayer({ language, rememberedLanguage }) {
     storedTime.current = 0;
   }
 
-  return <div className="site-controls mindscape-type" aria-label={zh ? '全站偏好' : 'Site preferences'}>
+  return <div className="site-controls mindscape-type" data-home={pathname === '/' ? 'true' : undefined} aria-label={zh ? '全站偏好' : 'Site preferences'}>
     <audio ref={player} preload="none" onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)}
       onLoadedMetadata={metadata} onTimeUpdate={(event) => setTime(event.currentTarget.currentTime)}
       onEnded={() => play((selected.current + 1) % tracks.length)} />
