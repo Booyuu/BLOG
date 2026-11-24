@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
+import ArticleDetailsFields from '../fields-article-details';
 
 function bilingual() {
   return { zh: '', en: '' };
@@ -68,6 +69,9 @@ export default function SiteForm({ initial }) {
         <h2>博客信息</h2>
         <TextPair title="标题" value={form.blogTitle} change={(value) => replace('blogTitle', value)} maxLength={60} />
         <TextPair title="简介" value={form.blogDescription} change={(value) => replace('blogDescription', value)} maxLength={240} optional multiline />
+      </section>
+      <section className="panel">
+        <ArticleDetailsFields title="冰岛游记侧栏" value={form.icelandDetails} onChange={(value) => replace('icelandDetails', value)} />
       </section>
       <section className="panel">
         <h2>首页底部</h2>
