@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { siteLanguage } from '../../../lib/preferences';
 import { notFound } from 'next/navigation';
 import { cache } from 'react';
-import MindscapeBackdrop from '../../components/mindscape-backdrop';
+import BlogHero, { blogHeroImage } from '../blog-hero';
 import { publishedPosts } from '../../../lib/content';
 import { renderMarkdown } from '../../../lib/markdown';
 import { displayCategory, legacyArticleDate, slugPattern } from '../../../lib/site';
@@ -25,7 +25,7 @@ export async function generateMetadata({ params }) {
       title: post.title,
       description: post.description || undefined,
       publishedTime: post.publishedAt,
-      images: post.cover ? [post.cover] : undefined,
+      images: [post.cover || blogHeroImage],
     },
   };
 }
@@ -37,18 +37,28 @@ export default async function PostPage({ params }) {
   const zh = language === 'zh';
   const category = displayCategory(post.category);
   const categoryLabel = { 生活: 'LIFE', 交易: 'TRADING', 创业: 'STARTUP', 旅行: 'TRAVEL' };
+  const label = zh ? category : categoryLabel[category];
   return <main className="legacy-reading">
-    <MindscapeBackdrop variant="article" />
     <article>
-      <h1>{post.title}</h1>
-      <div className="legacy-post-meta">
-        <span>{zh ? '日期' : 'DATE'} <time dateTime={post.publishedAt}>{legacyArticleDate(post.publishedAt)}</time></span>
-        <span aria-hidden="true">/</span>
-        <span>{zh ? '分类' : 'CATEGORY'} {zh ? category : categoryLabel[category]}</span>
+      <BlogHero image={post.cover || undefined} label={label} title={post.title} />
+      <div className="legacy-reading-layout">
+        <div className="prose legacy-prose" dangerouslySetInnerHTML={{ __html: renderMarkdown(post.markdown) }} />
+        <aside className="legacy-reading-side" aria-label={zh ? '文章信息' : 'Article details'}>
+          <dl className="legacy-reading-meta">
+            <div>
+              <dt>{zh ? '日期' : 'DATE'}</dt>
+              <dd><time dateTime={post.publishedAt}>{legacyArticleDate(post.publishedAt)}</time></dd>
+            </div>
+            <div>
+              <dt>{zh ? '分类' : 'CATEGORY'}</dt>
+              <dd><Link href={'/blog?category=' + encodeURIComponent(category)}>{label}</Link></dd>
+            </div>
+          </dl>
+        </aside>
+        <footer className="legacy-reading-footer">
+          <Link className="legacy-reading-back" href="/blog">{zh ? '返回博客' : 'Back to blog'}</Link>
+        </footer>
       </div>
-      {post.cover && <img className="article-cover" src={post.cover} alt="" />}
-      <div className="prose legacy-prose" dangerouslySetInnerHTML={{ __html: renderMarkdown(post.markdown) }} />
-      <Link className="legacy-reading-back" href="/blog">{zh ? '返回博客' : 'Back to blog'}</Link>
     </article>
   </main>;
 }
