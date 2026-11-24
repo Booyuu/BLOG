@@ -16,7 +16,7 @@ export default async function Admin() {
   return <>
     <div className="admin-title">
       <h1>内容管理</h1>
-      <div className="account-actions"><Link className="button" href="/admin/account/settings">账号设置</Link><LogoutButton /></div>
+      <div className="account-actions"><Link className="button" href="/admin/site/settings">网站内容</Link><Link className="button" href="/admin/account/settings">账号设置</Link><LogoutButton /></div>
     </div>
     {!storageReady() && <p role="status">内容存储尚未连接。</p>}
     <section className="dashboard-grid" aria-label="博客概览">

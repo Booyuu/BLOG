@@ -1,13 +1,23 @@
+const archives = [
+  ['/blog/photos.html', '/explore/photos'],
+  ['/travel/travel.html', '/explore/travel'],
+  ['/travel/Iceland.html', '/explore/iceland'],
+  ['/media/media.html', '/explore/media'],
+  ['/email_success.html', '/explore/subscribed'],
+];
+
 export default {
   poweredByHeader: false,
   outputFileTracingIncludes: { '/*': ['./content/post-01.md'] },
-  async rewrites() {
-    return [{ source: '/', destination: '/index.html' }];
-  },
   async redirects() {
     return [
+      { source: '/index.html', destination: '/', permanent: true },
       { source: '/blog/blog.html', destination: '/blog', permanent: true },
       { source: '/blog/post-01.html', destination: '/blog/post-01', permanent: true },
+      { source: '/project-ethicraft.html', destination: 'https://vlink.cc/ethicraft', permanent: true },
+      ...archives.map(([source, destination]) => ({
+        source, destination, missing: [{ type: 'query', key: 'embedded', value: '1' }], permanent: true,
+      })),
     ];
   },
   async headers() {

@@ -4,6 +4,7 @@ import {
   sameOrigin, sessionCookie, sessionSeconds, validSession,
 } from '../../../lib/auth';
 import { InputError, savePost, uploadImage } from '../../../lib/content';
+import { saveSiteContent } from '../../../lib/site-content';
 import { renderMarkdown } from '../../../lib/markdown';
 
 function reply(data, status = 200) {
@@ -43,6 +44,7 @@ export async function POST(request) {
       setSession(jar, await changePassword(current, next, confirm));
       return reply({ ok: true });
     }
+    if (mode === 'site') return reply({ site: await saveSiteContent(await request.json()) });
     if (mode === 'save') return reply({ post: await savePost(await request.json()) });
     if (mode === 'image') return reply({ url: await uploadImage((await request.formData()).get('image')) });
     if (mode === 'preview') {

@@ -1,3 +1,5 @@
+import Link from 'next/link';
+import { siteLanguage } from '../../../lib/preferences';
 import { notFound } from 'next/navigation';
 import { cache } from 'react';
 import MindscapeBackdrop from '../../components/mindscape-backdrop';
@@ -29,21 +31,24 @@ export async function generateMetadata({ params }) {
 }
 
 export default async function PostPage({ params }) {
-  const { slug } = await params;
+  const [{ slug }, language] = await Promise.all([params, siteLanguage()]);
   const post = await findPost(slug);
   if (!post) notFound();
+  const zh = language === 'zh';
+  const category = displayCategory(post.category);
+  const categoryLabel = { 生活: 'LIFE', 交易: 'TRADING', 创业: 'STARTUP', 旅行: 'TRAVEL' };
   return <main className="legacy-reading">
     <MindscapeBackdrop variant="article" />
     <article>
       <h1>{post.title}</h1>
       <div className="legacy-post-meta">
-        <span>DATE: <time dateTime={post.publishedAt}>{legacyArticleDate(post.publishedAt)}</time></span>
+        <span>{zh ? '日期' : 'DATE'} <time dateTime={post.publishedAt}>{legacyArticleDate(post.publishedAt)}</time></span>
         <span aria-hidden="true">/</span>
-        <span>CATEGORY: {displayCategory(post.category) === '随笔' ? 'THOUGHTS' : displayCategory(post.category)}</span>
+        <span>{zh ? '分类' : 'CATEGORY'} {zh ? category : categoryLabel[category]}</span>
       </div>
       {post.cover && <img className="article-cover" src={post.cover} alt="" />}
       <div className="prose legacy-prose" dangerouslySetInnerHTML={{ __html: renderMarkdown(post.markdown) }} />
-      <a className="legacy-reading-back" href="/blog">返回文章列表</a>
+      <Link className="legacy-reading-back" href="/blog">{zh ? '返回博客' : 'Back to blog'}</Link>
     </article>
   </main>;
 }
