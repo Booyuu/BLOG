@@ -63,42 +63,62 @@
 .legacy-reading-side { min-width: 0; }
 .legacy-reading-panel { position: sticky; top: 8rem; }
 .legacy-reading-panel summary {
-  cursor: pointer; width: fit-content; border: 1px solid #fff4; padding: .5rem .75rem;
-  color: #ddd; font: 500 .8rem var(--mindscape-mono);
+  list-style: none; cursor: pointer; display: grid; place-items: center;
+  margin-left: auto; width: 2.65rem; height: 2.65rem;
+  border: 1px solid #fff4; border-radius: .15rem; color: #ddd;
 }
+.legacy-reading-panel summary::-webkit-details-marker { display: none; }
 .legacy-reading-panel summary:hover { color: #fff; border-color: #fff8; }
+.legacy-reading-arrow { display: block; font: 400 1.8rem/1 var(--mindscape-ui); }
+.legacy-reading-panel:not([open]) .legacy-reading-arrow { transform: rotate(180deg); }
+.legacy-reading-hide, .legacy-reading-show {
+  position: absolute; width: 1px; height: 1px; margin: -1px;
+  padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap;
+}
 .legacy-reading-panel[open] .legacy-reading-show,
 .legacy-reading-panel:not([open]) .legacy-reading-hide { display: none; }
-.legacy-reading-meta {
-  border-left: 1px solid #fff3;
-  padding-left: 2rem; margin: 1.25rem 0 0; display: grid; gap: 2rem;
-}
+.legacy-reading-details { border-left: 1px solid #fff3; padding-left: 2rem; margin-top: 1.25rem; }
+.legacy-reading-meta { margin: 0; display: grid; gap: 2rem; }
 .legacy-reading-meta dt {
-  color: #aaa; letter-spacing: .1em; font: 500 .75rem var(--mindscape-mono); margin-bottom: .45rem;
+  color: #888; font: 500 .75rem var(--mindscape-mono); letter-spacing: .1em; margin-bottom: .5rem;
 }
-.legacy-reading-meta dd { margin: 0; color: #fff; font: 500 1.2rem var(--mindscape-ui); }
+.legacy-reading-meta dd { margin: 0; color: #fff; font: 500 1.2rem/1.55 var(--mindscape-ui); overflow-wrap: anywhere; }
 .legacy-reading-meta a { text-decoration-color: #fff5; }
-.legacy-prose { color: #ccc; font: 1.1rem/1.8 var(--mindscape-body); }
+.legacy-meta-secondary { display: block; color: #888; font: .875rem/1.5 var(--mindscape-body); }
+.legacy-prose { color: #ccc; font: 1.1rem/1.8 var(--mindscape-body); min-width: 0; }
 .legacy-prose p { margin-bottom: 1.5rem; }
-.legacy-prose > p:first-child:not(:has(img))::first-letter {
+.legacy-prose > p:first-child:not(:has(img))::first-letter,
+.legacy-markdown-body > p:first-child:not(:has(img))::first-letter {
   float: left; color: #fff; font: 400 2.9rem/.95 var(--mindscape-serif); margin: .25rem .7rem 0 0;
 }
-.legacy-prose h2, .legacy-prose h3 { color: #fff; font: 400 2rem var(--mindscape-serif); margin-top: 3rem; }
+.legacy-prose h2, .legacy-prose h3 { color: #fff; font: 400 2rem var(--mindscape-serif); margin: 4rem 0 1.5rem; }
 .legacy-prose img { max-width: min(100%, 38rem); max-height: 27rem; border-radius: 2px; object-fit: contain; }
 .legacy-prose p:has(> img:only-child) { margin-block: 2.25rem; }
 .legacy-prose a, .legacy-reading-back { color: #00f3ff; }
 .legacy-reading-footer { grid-column: 1 / -1; border-top: 1px solid #fff2; padding-top: 2.2rem; }
 .legacy-reading-back { font-family: var(--mindscape-mono); }
-
-@media (min-width: 768px) {
-  .legacy-reading-layout:has(.legacy-reading-panel:not([open])) {
-    grid-template-columns: minmax(0, 1fr) auto;
-    column-gap: clamp(1.5rem, 4vw, 4rem);
-  }
-  .legacy-reading-layout:has(.legacy-reading-panel:not([open])) .legacy-prose {
-    width: min(100%, 54rem);
-    justify-self: center;
-  }
+.legacy-reading-layout:is([data-no-sidebar], :has(.legacy-reading-panel:not([open]))) { grid-template-columns: minmax(0, 1fr); }
+.legacy-reading-layout:is([data-no-sidebar], :has(.legacy-reading-panel:not([open]))) .legacy-prose {
+  width: min(100%, 54rem); justify-self: center;
+}
+.legacy-reading-layout:has(.legacy-reading-panel:not([open])) .legacy-reading-side { grid-row: 1; justify-self: end; }
+.legacy-reading-layout:has(.legacy-reading-panel:not([open])) .legacy-prose { grid-row: 2; }
+.legacy-travel-figure { margin: 2rem auto 3rem; max-width: 38rem; }
+.legacy-travel-figure figcaption { color: #aaa; font-size: .75rem; text-align: center; font-style: italic; margin-top: .65rem; }
+.legacy-travel-gallery, .legacy-destinations-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.legacy-travel-gallery img { width: 100%; height: clamp(8rem, 22vw, 16rem); object-fit: cover; }
+.legacy-destinations { margin-bottom: 2rem; }
+.legacy-destinations h2 { color: #aaa; font: 500 .75rem var(--mindscape-mono); letter-spacing: .13em; margin-bottom: 2rem; }
+.legacy-destinations figure { margin: 0; position: relative; aspect-ratio: 16/9; background: #111; overflow: hidden; }
+.legacy-destinations img { display: block; width: 100%; height: 100%; object-fit: cover; opacity: .65; }
+.legacy-destinations figcaption { position: absolute; bottom: 1rem; left: 1rem; color: #fff; font: 1.2rem var(--mindscape-serif); }
+.legacy-article-share { border-top: 1px solid #fff2; margin-top: 3rem; padding-top: 2.5rem; display: flex; align-items: center; gap: 1rem; color: #aaa; }
+.legacy-article-share a, .legacy-article-share button { font-size: 1.25rem; color: inherit; text-decoration: none; }
+.legacy-article-share button { padding: 0; background: transparent; border: 0; cursor: pointer; }
+.legacy-article-share a:hover, .legacy-article-share button:hover { color: #fff; }
+@media (min-width: 1100px) {
+  .legacy-reading-layout:has(.legacy-reading-panel:not([open])) .legacy-prose,
+  .legacy-reading-layout:has(.legacy-reading-panel:not([open])) .legacy-reading-side { grid-area: 1 / 1; }
 }
 @media (max-width: 767px) {
   .legacy-nav { padding: 1.35rem; gap: 1rem; }
@@ -108,7 +128,8 @@
   .legacy-reading-layout { grid-template-columns: minmax(0, 1fr); padding-top: 3.5rem; gap: 2.4rem; }
   .legacy-reading-side { grid-row: 1; }
   .legacy-reading-panel { position: static; }
-  .legacy-reading-meta { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; padding-left: 1rem; }
+  .legacy-reading-meta { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+  .legacy-reading-details { padding-left: 1rem; }
 }
 @media (prefers-reduced-motion: reduce) {
   .legacy-hero > img, .legacy-entry { animation: none; }

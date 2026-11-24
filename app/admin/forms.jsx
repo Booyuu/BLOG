@@ -2,6 +2,8 @@
 
 import { useRouter } from 'next/navigation';
 import { useDeferredValue, useMemo, useRef, useState } from 'react';
+import ArticleDetailsFields from './fields-article-details';
+import { articleDetailsDefaults } from '../../lib/article-details';
 import { renderMarkdown } from '../../lib/markdown';
 import { displayCategory, siteUrl, slugPattern } from '../../lib/site';
 
@@ -113,6 +115,7 @@ export function Editor({ post, categories, suggestedSlug }) {
   const [current, setCurrent] = useState(post);
   const [slug, setSlug] = useState(post?.slug ?? suggestedSlug);
   const [cover, setCover] = useState(post?.cover ?? '');
+  const [details, setDetails] = useState(post?.details ?? articleDetailsDefaults);
   const [markdown, setMarkdown] = useState(post?.markdown ?? '');
   const [view, setView] = useState('split');
   const deferredMarkdown = useDeferredValue(markdown);
@@ -151,6 +154,7 @@ export function Editor({ post, categories, suggestedSlug }) {
         description: fields.description,
         category: fields.category,
         cover,
+        details,
         markdown,
         revision: current?.updatedAt ?? '',
         status,
@@ -227,6 +231,7 @@ export function Editor({ post, categories, suggestedSlug }) {
           <label className="upload">上传封面<input type="file" accept="image/png,image/jpeg,image/webp,image/gif" onChange={(event) => upload(event, true)} /></label>
           {cover && <><img src={cover} alt="文章封面" /><button type="button" onClick={() => setCover('')}>移除封面</button></>}
         </div>
+        <ArticleDetailsFields value={details} onChange={setDetails} />
         <div className="editor-toolbar">
           <div className="body-view-options" role="group" aria-label="正文显示方式">
             {[['split', '并排预览'], ['preview', '仅预览'], ['write', '仅编辑']].map(([mode, label]) =>
