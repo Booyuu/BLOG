@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useRef, useState } from 'react';
+import { displayCategory, siteUrl, slugPattern } from '../../lib/site';
 
 async function send(action, data) {
   const multipart = data instanceof FormData;
@@ -108,6 +109,7 @@ export function Editor({ post, categories, suggestedSlug }) {
   const router = useRouter();
   const textarea = useRef(null);
   const [current, setCurrent] = useState(post);
+  const [slug, setSlug] = useState(post?.slug ?? suggestedSlug);
   const [cover, setCover] = useState(post?.cover ?? '');
   const [markdown, setMarkdown] = useState(post?.markdown ?? '');
   const [preview, setPreview] = useState(null);
@@ -132,10 +134,15 @@ export function Editor({ post, categories, suggestedSlug }) {
     event.preventDefault();
     const fields = Object.fromEntries(new FormData(event.currentTarget));
     const status = event.nativeEvent.submitter?.value || 'draft';
+    if (!slugPattern.test(slug) || slug === 'new') {
+      setNotice('');
+      setError('自定义网址只接受小写字母、数字和短横线。');
+      return;
+    }
     if (current?.status === 'published' && status === 'draft' && !confirm('撤下后，读者将暂时无法打开这篇文章。')) return;
     perform(async () => {
       const { post: saved } = await send('save', {
-        slug: current?.slug ?? fields.slug,
+        slug: current?.slug ?? slug,
         title: fields.title,
         description: fields.description,
         category: fields.category,
@@ -196,8 +203,16 @@ export function Editor({ post, categories, suggestedSlug }) {
       <fieldset disabled={busy}>
         <label>标题<input name="title" defaultValue={post?.title} maxLength={120} required /></label>
         <div className="editor-grid">
-          <label>文章链接<input name="slug" defaultValue={current?.slug ?? suggestedSlug} pattern={String.raw`[a-z0-9][a-z0-9\-]{0,79}`} placeholder="my-first-post" readOnly={Boolean(current)} maxLength={80} required /></label>
-          <label>分类<select name="category" defaultValue={post?.category ?? categories[0]}>{categories.map((category) => <option key={category}>{category}</option>)}</select></label>
+          <div className="article-address">
+            <span>文章网址</span>
+            <code>{siteUrl + '/blog/' + slug}</code>
+            {current && current.status !== 'published' && <span className="muted">发布后读者可以打开。</span>}
+            {!current && <details className="slug-options">
+              <summary>自定义网址尾段</summary>
+              <label>网址尾段<input value={slug} onChange={(event) => setSlug(event.target.value)} maxLength={80} spellCheck="false" autoCapitalize="none" /></label>
+            </details>}
+          </div>
+          <label>分类<select name="category" defaultValue={displayCategory(post?.category)}>{categories.map((category) => <option key={category}>{category}</option>)}</select></label>
         </div>
         <label>摘要<input name="description" defaultValue={post?.description} maxLength={240} /></label>
         <div className="media-tools">

@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { authConfigured } from '../../lib/auth';
 import { readContent, storageReady } from '../../lib/content';
-import { analyticsUrl, articleDate } from '../../lib/site';
+import { analyticsUrl, articleDate, displayCategory } from '../../lib/site';
 import { signedIn } from './session';
 import { LoginForm, LogoutButton } from './forms';
 
@@ -27,7 +27,7 @@ export default async function Admin() {
     <section className="panel dashboard-posts">
       <div className="section-heading"><h2>文章</h2><Link className="button primary" href="/admin/new">写文章</Link></div>
       {ordered.length ? <ul className="admin-post-list">{ordered.map((post) => <li key={post.slug}>
-        <div><Link href={'/admin/' + post.slug}>{post.title}</Link><p>{post.category} · {articleDate(post.updatedAt)}</p></div>
+        <div><Link href={'/admin/' + post.slug}>{post.title}</Link><p>{displayCategory(post.category)} · {articleDate(post.updatedAt)}</p></div>
         <span className="status">{post.status === 'published' ? '已发布' : '草稿'}</span>
       </li>)}</ul> : <p className="muted">还没有文章。</p>}
     </section>

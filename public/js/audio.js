@@ -1,6 +1,8 @@
 // === BOYU | 星际音频核心 V9.1 (手机端适配版) ===
 
-document.addEventListener("DOMContentLoaded", () => {
+(() => {
+function initAudio() {
+    if (!document.getElementById("audio-slot") || document.getElementById("audio-console")) return;
 
     // 1. 智能路径修正 (兼容子页面)
     const path = window.location.pathname;
@@ -269,4 +271,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // 启动！
     initAudioState();
-});
+}
+
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initAudio, { once: true });
+else initAudio();
+})();
