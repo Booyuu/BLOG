@@ -22,14 +22,17 @@ export default function SitePlayer({ language, rememberedLanguage }) {
   const storedTime = useRef(0);
   const selected = useRef(0);
   const [track, setTrack] = useState(0);
+  const [locale, setLocale] = useState(language);
   const [playing, setPlaying] = useState(false);
   const [time, setTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [error, setError] = useState(false);
-  const zh = language === 'zh' || pathname?.startsWith('/admin');
+  const zh = locale === 'zh' || pathname?.startsWith('/admin');
   const [name, artist] = tracks[track];
 
   function applyLanguage(value) {
+    setLocale(value);
+    document.documentElement.lang = value === 'zh' ? 'zh-CN' : 'en';
     document.cookie = 'mindscape_lang=' + value + '; Path=/; Max-Age=31536000; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : '');
     try { localStorage.setItem('site-lang', value); } catch {}
     router.refresh();
@@ -55,6 +58,12 @@ export default function SitePlayer({ language, rememberedLanguage }) {
     window.addEventListener('pagehide', remember);
     return () => window.removeEventListener('pagehide', remember);
   }, []);
+
+  useEffect(() => {
+    const saved = document.cookie.match(/(?:^|;\s*)mindscape_lang=(zh|en)(?:;|$)/)?.[1] ?? language;
+    setLocale(saved);
+    document.documentElement.lang = saved === 'zh' ? 'zh-CN' : 'en';
+  }, [language, pathname]);
 
   async function play(index = selected.current) {
     const audio = player.current;
@@ -108,8 +117,8 @@ export default function SitePlayer({ language, rememberedLanguage }) {
     </div>
     <span className="site-control-divider" aria-hidden="true" />
     <div className="site-language" aria-label={zh ? '网站语言' : 'Site language'}>
-      <button type="button" lang="en" aria-pressed={language === 'en'} onClick={() => applyLanguage('en')}>EN</button>
-      <button type="button" lang="zh-CN" aria-pressed={language === 'zh'} onClick={() => applyLanguage('zh')}>中文</button>
+      <button type="button" lang="en" aria-pressed={locale === 'en'} onClick={() => applyLanguage('en')}>EN</button>
+      <button type="button" lang="zh-CN" aria-pressed={locale === 'zh'} onClick={() => applyLanguage('zh')}>中文</button>
     </div>
     {error && <p className="site-player-error" role="status">{zh ? '音乐暂时无法播放。' : 'Music could not play.'}</p>}
   </div>;
