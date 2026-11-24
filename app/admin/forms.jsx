@@ -22,11 +22,11 @@ export function LoginForm() {
 
   async function login(event) {
     event.preventDefault();
-    const password = new FormData(event.currentTarget).get('password');
+    const { username, password } = Object.fromEntries(new FormData(event.currentTarget));
     setBusy(true);
     setError('');
     try {
-      await send('login', { password });
+      await send('login', { username, password });
       router.refresh();
     } catch (failure) {
       setError(failure.message);
@@ -37,9 +37,50 @@ export function LoginForm() {
 
   return <form className="panel login" method="post" onSubmit={login}>
     <h1>登录博客后台</h1>
+    <label>账号<input name="username" autoComplete="username" autoCapitalize="none" spellCheck="false" required /></label>
     <label>管理密码<input type="password" name="password" autoComplete="current-password" required /></label>
     {error && <p role="alert" className="error">{error}</p>}
     <button className="primary" disabled={busy}>{busy ? '正在登录' : '登录'}</button>
+  </form>;
+}
+
+export function PasswordForm({ username, minimum }) {
+  const [busy, setBusy] = useState(false);
+  const [status, setStatus] = useState('');
+  const [error, setError] = useState('');
+
+  async function update(event) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const fields = Object.fromEntries(new FormData(form));
+    setStatus('');
+    setError('');
+    if (fields.next !== fields.confirm) {
+      setError('两次输入的新密码不一致。');
+      return;
+    }
+    setBusy(true);
+    try {
+      await send('password', fields);
+      form.reset();
+      setStatus('密码已更新，其他设备上的登录已失效。');
+    } catch (failure) {
+      setError(failure.message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return <form className="panel settings-form" method="post" onSubmit={update}>
+    <div className="settings-identity"><span>管理员账号</span><strong>{username}</strong></div>
+    <input type="text" name="username" autoComplete="username" value={username} readOnly hidden />
+    <label>当前密码<input type="password" name="current" autoComplete="current-password" maxLength={128} required /></label>
+    <label>新密码<input type="password" name="next" autoComplete="new-password" minLength={minimum} maxLength={128} aria-describedby="password-requirements" required /></label>
+    <p id="password-requirements" className="muted">使用 {minimum} 至 128 个字符，首尾不要留空格。</p>
+    <label>确认新密码<input type="password" name="confirm" autoComplete="new-password" minLength={minimum} maxLength={128} required /></label>
+    {error && <p role="alert" className="error">{error}</p>}
+    {status && <p role="status" className="notice">{status}</p>}
+    <button className="primary" disabled={busy}>{busy ? '正在保存' : '更新密码'}</button>
   </form>;
 }
 
