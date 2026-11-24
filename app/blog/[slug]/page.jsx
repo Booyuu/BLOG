@@ -44,16 +44,22 @@ export default async function PostPage({ params }) {
       <div className="legacy-reading-layout">
         <div className="prose legacy-prose" dangerouslySetInnerHTML={{ __html: renderMarkdown(post.markdown) }} />
         <aside className="legacy-reading-side" aria-label={zh ? '文章信息' : 'Article details'}>
-          <dl className="legacy-reading-meta">
-            <div>
-              <dt>{zh ? '日期' : 'DATE'}</dt>
-              <dd><time dateTime={post.publishedAt}>{legacyArticleDate(post.publishedAt)}</time></dd>
-            </div>
-            <div>
-              <dt>{zh ? '分类' : 'CATEGORY'}</dt>
-              <dd><Link href={'/blog?category=' + encodeURIComponent(category)}>{label}</Link></dd>
-            </div>
-          </dl>
+          <details className="legacy-reading-panel" open>
+            <summary>
+              <span className="legacy-reading-hide">{zh ? '收起文章信息' : 'Hide article details'}</span>
+              <span className="legacy-reading-show">{zh ? '展开文章信息' : 'Show article details'}</span>
+            </summary>
+            <dl className="legacy-reading-meta">
+              <div>
+                <dt>{zh ? '日期' : 'DATE'}</dt>
+                <dd><time dateTime={post.publishedAt}>{legacyArticleDate(post.publishedAt)}</time></dd>
+              </div>
+              <div>
+                <dt>{zh ? '分类' : 'CATEGORY'}</dt>
+                <dd><Link href={'/blog?category=' + encodeURIComponent(category)}>{label}</Link></dd>
+              </div>
+            </dl>
+          </details>
         </aside>
         <footer className="legacy-reading-footer">
           <Link className="legacy-reading-back" href="/blog">{zh ? '返回博客' : 'Back to blog'}</Link>
