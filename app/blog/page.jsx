@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import BlogHero from './blog-hero';
 import { publishedPosts } from '../../lib/content';
 import { displayCategory, legacyArticleDate } from '../../lib/site';
 
@@ -15,7 +16,6 @@ export async function generateMetadata() {
   };
 }
 
-const hero = 'https://images.unsplash.com/photo-1686349472661-ff361a66834b?q=80&w=3270&auto=format&fit=crop';
 const lifeCover = 'https://images.unsplash.com/photo-1509688541036-bcf70b62e85f?q=80&w=1440&auto=format&fit=crop';
 const labels = { 生活: 'LIFE', 交易: 'TRADING', 创业: 'STARTUP', 旅行: 'TRAVEL LOGS', 投稿: 'SUBMISSIONS' };
 const archive = [
@@ -53,14 +53,9 @@ export default async function BlogPage({ searchParams }) {
   const visible = selected ? entries.filter((entry) => entry.category === selected) : entries;
 
   return <>
-    <header className="legacy-hero">
-      <img src={hero} alt="" fetchPriority="high" />
-      <div className="legacy-hero-title">
-        <span>{zh ? '博客' : 'BLOG'}</span>
-        <h1>{title === 'INNER CHRONICLES' ? <>INNER<br />CHRONICLES</> : title}</h1>
-        {settings.blogDescription[language] && <p>{settings.blogDescription[language]}</p>}
-      </div>
-    </header>
+    <BlogHero label={zh ? '博客' : 'BLOG'}
+      title={title === 'INNER CHRONICLES' ? <>INNER<br />CHRONICLES</> : title}
+      description={settings.blogDescription[language]} />
     <main className="legacy-archive">
       <aside className="legacy-archive-side">
         <nav aria-label="按分类查看文章" className="legacy-filters">
