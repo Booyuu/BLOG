@@ -108,6 +108,7 @@ export function LogoutButton() {
 export function Editor({ post, categories, suggestedSlug }) {
   const router = useRouter();
   const textarea = useRef(null);
+  const selection = useRef(null);
   const [current, setCurrent] = useState(post);
   const [slug, setSlug] = useState(post?.slug ?? suggestedSlug);
   const [cover, setCover] = useState(post?.cover ?? '');
@@ -167,6 +168,7 @@ export function Editor({ post, categories, suggestedSlug }) {
       const text = await file.text();
       if (text.length > 120000) throw new Error('Markdown 文件超出长度限制。');
       setMarkdown(text);
+      selection.current = null;
       setPreview(null);
       setNotice('Markdown 已导入编辑器。');
     });
@@ -177,8 +179,7 @@ export function Editor({ post, categories, suggestedSlug }) {
     const file = input.files?.[0];
     input.value = '';
     if (!file) return;
-    const start = textarea.current?.selectionStart ?? markdown.length;
-    const end = textarea.current?.selectionEnd ?? start;
+    const [start, end] = selection.current ?? [markdown.length, markdown.length];
     perform(async () => {
       const payload = new FormData();
       payload.set('image', file);
@@ -186,7 +187,13 @@ export function Editor({ post, categories, suggestedSlug }) {
       if (asCover) setCover(url);
       else {
         const alt = file.name.replace(/\.[^.]+$/, '').replace(/[\[\]\\]/g, '').replace(/[\r\n]/g, ' ');
-        setMarkdown((text) => text.slice(0, start) + '\n\n![' + alt + '](' + url + ')\n\n' + text.slice(end));
+        const image = '\n\n![' + alt + '](' + url + ')\n\n';
+        setMarkdown((text) => text.slice(0, start) + image + text.slice(end));
+        selection.current = [start + image.length, start + image.length];
+        requestAnimationFrame(() => {
+          textarea.current?.focus();
+          textarea.current?.setSelectionRange(...selection.current);
+        });
         setPreview(null);
       }
       setNotice(asCover ? '封面已上传。' : '图片已插入正文。');
@@ -220,11 +227,11 @@ export function Editor({ post, categories, suggestedSlug }) {
           {cover && <><img src={cover} alt="文章封面" /><button type="button" onClick={() => setCover('')}>移除封面</button></>}
         </div>
         <label>正文（Markdown）
-          <textarea ref={textarea} value={markdown} onChange={(event) => { setMarkdown(event.target.value); setPreview(null); }} maxLength={120000} rows={15} />
+          <textarea ref={textarea} value={markdown} onSelect={(event) => { selection.current = [event.target.selectionStart, event.target.selectionEnd]; }} onChange={(event) => { setMarkdown(event.target.value); setPreview(null); }} maxLength={120000} rows={15} />
         </label>
         <div className="media-tools">
           <label className="upload">导入 Markdown<input type="file" accept=".md,.markdown,.txt,text/markdown,text/plain" onChange={importMarkdown} /></label>
-          <label className="upload">插入图片<input type="file" accept="image/png,image/jpeg,image/webp,image/gif" onChange={(event) => upload(event, false)} /></label>
+          <label className="upload inline-image">在光标处插入图片<input type="file" accept="image/png,image/jpeg,image/webp,image/gif" onChange={(event) => upload(event, false)} /></label>
           <button type="button" onClick={() => preview === null ? perform(async () => setPreview((await send('preview', { markdown })).html)) : setPreview(null)}>{preview === null ? '预览正文' : '关闭预览'}</button>
         </div>
         {preview !== null && <div className="prose preview" dangerouslySetInnerHTML={{ __html: preview }} />}

@@ -13,7 +13,7 @@ export default function AdminLayout({ children }) {
           <span className="admin-mark" aria-hidden="true" />
           <span><strong>MINDSCAPE</strong><small>博客控制台</small></span>
         </Link>
-        <a className="admin-public" href="/blog">查看博客</a>
+        <Link className="admin-public" href="/blog">查看博客</Link>
       </header>
       {children}
     </main>

@@ -79,3 +79,24 @@
   .admin-stage .admin-header { min-height: 4.75rem; }
   .admin-stage .editor-grid { grid-template-columns: 1fr; }
 }
+
+.site-editor h1 { margin-bottom: 1.4rem; }
+.site-content-form fieldset { min-width: 0; padding: 0; border: 0; margin: 0; display: grid; gap: 1rem; }
+.site-content-form .panel { display: grid; gap: 1rem; }
+.site-content-form label { display: grid; gap: .35rem; }
+.site-form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.site-project-editor { display: grid; gap: 1rem; }
+.site-project-fields { padding-top: 1rem; border-top: 1px solid var(--line); display: grid; gap: .75rem; }
+.site-project-fields h3 { margin: 0; color: var(--accent); font-family: var(--mindscape-serif); }
+.site-project-buttons { display: flex; gap: .4rem; flex-wrap: wrap; }
+.site-save-bar { position: sticky; bottom: 0; z-index: 1; padding: .7rem 0; display: flex; gap: 1rem; align-items: center; background: #050505ec; }
+.admin-stage .editor-grid { align-items: start; }
+.admin-stage .editor textarea { line-height: 1.75; padding: .8rem 1rem; }
+.admin-stage .editor .inline-image { border-color: #00f3ff75; color: #00f3ff; }
+@media (max-width: 1380px) { .admin-stage .admin-header { padding-right: 13rem; } }
+@media (max-width: 700px) {
+  .site-form-grid { grid-template-columns: 1fr; }
+  .admin-stage .admin-header { padding-right: 0; align-items: start; padding-top: .7rem; }
+  .admin-stage .admin-public { position: absolute; right: 1rem; top: 3.5rem; font-size: .8rem; }
+  .admin-stage .account-actions { flex-wrap: wrap; justify-content: flex-start; }
+}
