@@ -23,7 +23,6 @@ export default function SitePlayer({ language, rememberedLanguage }) {
   const selected = useRef(0);
   const [track, setTrack] = useState(0);
   const [playing, setPlaying] = useState(false);
-  const [expanded, setExpanded] = useState(false);
   const [time, setTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [error, setError] = useState(false);
@@ -83,27 +82,35 @@ export default function SitePlayer({ language, rememberedLanguage }) {
     <audio ref={player} preload="none" onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)}
       onLoadedMetadata={metadata} onTimeUpdate={(event) => setTime(event.currentTarget.currentTime)}
       onEnded={() => play((selected.current + 1) % tracks.length)} />
-    <button className="site-player-toggle" type="button" aria-label={playing ? (zh ? '暂停音乐' : 'Pause music') : (zh ? '播放音乐' : 'Play music')}
-      onClick={() => playing ? player.current.pause() : play()}>
-      <span className="site-wave" data-playing={playing} aria-hidden="true"><i /><i /><i /><i /></span>
-      <span>{playing ? name : (zh ? '音乐' : 'Music')}</span>
-    </button>
-    <button className="site-tracks-toggle" type="button" aria-expanded={expanded} aria-controls="site-playlist"
-      onClick={() => setExpanded(!expanded)} aria-label={zh ? '播放列表' : 'Playlist'}>≡</button>
+    <div className="site-music">
+      <button className="site-player-toggle" type="button" aria-label={playing ? (zh ? '暂停音乐' : 'Pause music') : (zh ? '播放音乐' : 'Play music')}
+        onClick={() => playing ? player.current.pause() : play()}>
+        <span className="site-wave" data-playing={playing} aria-hidden="true"><i /><i /><i /><i /></span>
+        <span className="site-track-copy">
+          <span>{playing ? <><span className="site-playing-status">PLAYING:</span> {name.toUpperCase()}</> : 'AUDIO PAUSED'}</span>
+          {playing && <span className="site-track-time">{clock(time)} / {clock(duration)}</span>}
+        </span>
+      </button>
+      {playing && duration > 0 && <div className="site-play-progress" aria-hidden="true">
+        <span style={{ width: Math.min(time / duration, 1) * 100 + '%' }} />
+      </div>}
+      <div className="site-playlist-flyout">
+        <div className="site-playlist">
+          <div className="site-now-playing"><strong>{name}</strong><span>{artist}</span></div>
+          {duration > 0 && <label className="site-seek">
+            <span>{clock(time)}</span><input type="range" min="0" max={duration} step=".25" value={Math.min(time, duration)}
+              aria-label={zh ? '播放进度' : 'Seek'} onChange={(event) => { player.current.currentTime = Number(event.target.value); setTime(Number(event.target.value)); }} /><span>{clock(duration)}</span>
+          </label>}
+          {tracks.map(([title, composer], index) => <button type="button" key={title} aria-pressed={index === track}
+            onClick={() => play(index)}><span>{title}</span><small>{composer}</small></button>)}
+        </div>
+      </div>
+    </div>
     <span className="site-control-divider" aria-hidden="true" />
     <div className="site-language" aria-label={zh ? '网站语言' : 'Site language'}>
       <button type="button" lang="en" aria-pressed={language === 'en'} onClick={() => applyLanguage('en')}>EN</button>
       <button type="button" lang="zh-CN" aria-pressed={language === 'zh'} onClick={() => applyLanguage('zh')}>中文</button>
     </div>
-    {expanded && <div id="site-playlist" className="site-playlist" onKeyDown={(event) => { if (event.key === 'Escape') setExpanded(false); }}>
-      <div className="site-now-playing"><strong>{name}</strong><span>{artist}</span></div>
-      {duration > 0 && <label className="site-seek">
-        <span>{clock(time)}</span><input type="range" min="0" max={duration} step=".25" value={Math.min(time, duration)}
-          aria-label={zh ? '播放进度' : 'Seek'} onChange={(event) => { player.current.currentTime = Number(event.target.value); setTime(Number(event.target.value)); }} /><span>{clock(duration)}</span>
-      </label>}
-      {tracks.map(([title, composer], index) => <button type="button" key={title} aria-pressed={index === track}
-        onClick={() => play(index)}><span>{title}</span><small>{composer}</small></button>)}
-    </div>}
     {error && <p className="site-player-error" role="status">{zh ? '音乐暂时无法播放。' : 'Music could not play.'}</p>}
   </div>;
 }
