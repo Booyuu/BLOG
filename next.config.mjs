@@ -8,7 +8,7 @@ const archives = [
 
 export default {
   poweredByHeader: false,
-  outputFileTracingIncludes: { '/*': ['./content/post-01.md'] },
+  outputFileTracingIncludes: { '/*': ['./content/post-01.md'], '/home-view': ['./content/original-home.html'] },
   async redirects() {
     return [
       { source: '/index.html', destination: '/', permanent: true },

@@ -76,3 +76,12 @@
 @media (prefers-reduced-motion: reduce) { .site-wave[data-playing="true"] i { animation: none; } }
 @media (max-width: 600px) { .site-controls { top: .8rem; } }
 .mindscape-explore { width: 100%; height: 100dvh; display: block; border: 0; background: #050505; }
+.mindscape-home-frame { display: block; width: 100%; height: 100dvh; border: 0; background: #050505; }
+.site-controls[data-home] { top: 2.15rem; left: 8.2rem; right: auto; background: transparent; color: #fff; }
+.site-controls[data-home] .site-playlist-flyout { left: 0; right: auto; }
+@media (min-width: 768px) {
+  .site-controls[data-home] .site-control-divider, .site-controls[data-home] .site-language { display: none; }
+}
+@media (max-width: 767px) {
+  .site-controls[data-home] { top: 2rem; left: 6.55rem; max-width: calc(100vw - 10.5rem); }
+}

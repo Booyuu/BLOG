@@ -31,10 +31,10 @@
     if (!element || element.target === '_blank' || element.hasAttribute('download')) return;
     const link = new URL(element.dataset.siteRoute ?? element.href, location.href);
     if (link.origin !== location.origin) return;
-    const path = paths[link.pathname] ?? (/^\/blog\/[a-z0-9-]+$/.test(link.pathname) ? link.pathname : null);
+    const path = paths[link.pathname] ?? (/^\/(?:blog|explore)\/[a-z0-9-]+$/.test(link.pathname) ? link.pathname : null);
     if (!path) return;
     event.preventDefault();
     event.stopPropagation();
-    parent.postMessage({ mindscapePath: path + link.hash }, location.origin);
+    parent.postMessage({ mindscapePath: path + link.search + link.hash }, location.origin);
   }, true);
 })();
