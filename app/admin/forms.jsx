@@ -1,7 +1,8 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useRef, useState } from 'react';
+import { useDeferredValue, useMemo, useRef, useState } from 'react';
+import { renderMarkdown } from '../../lib/markdown';
 import { displayCategory, siteUrl, slugPattern } from '../../lib/site';
 
 async function send(action, data) {
@@ -113,7 +114,9 @@ export function Editor({ post, categories, suggestedSlug }) {
   const [slug, setSlug] = useState(post?.slug ?? suggestedSlug);
   const [cover, setCover] = useState(post?.cover ?? '');
   const [markdown, setMarkdown] = useState(post?.markdown ?? '');
-  const [preview, setPreview] = useState(null);
+  const [view, setView] = useState('split');
+  const deferredMarkdown = useDeferredValue(markdown);
+  const previewHtml = useMemo(() => view === 'write' ? '' : renderMarkdown(deferredMarkdown), [deferredMarkdown, view]);
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState('');
   const [error, setError] = useState('');
@@ -169,7 +172,6 @@ export function Editor({ post, categories, suggestedSlug }) {
       if (text.length > 120000) throw new Error('Markdown 文件超出长度限制。');
       setMarkdown(text);
       selection.current = null;
-      setPreview(null);
       setNotice('Markdown 已导入编辑器。');
     });
   }
@@ -194,7 +196,6 @@ export function Editor({ post, categories, suggestedSlug }) {
           textarea.current?.focus();
           textarea.current?.setSelectionRange(...selection.current);
         });
-        setPreview(null);
       }
       setNotice(asCover ? '封面已上传。' : '图片已插入正文。');
     });
@@ -226,15 +227,27 @@ export function Editor({ post, categories, suggestedSlug }) {
           <label className="upload">上传封面<input type="file" accept="image/png,image/jpeg,image/webp,image/gif" onChange={(event) => upload(event, true)} /></label>
           {cover && <><img src={cover} alt="文章封面" /><button type="button" onClick={() => setCover('')}>移除封面</button></>}
         </div>
-        <label>正文（Markdown）
-          <textarea ref={textarea} value={markdown} onSelect={(event) => { selection.current = [event.target.selectionStart, event.target.selectionEnd]; }} onChange={(event) => { setMarkdown(event.target.value); setPreview(null); }} maxLength={120000} rows={15} />
-        </label>
-        <div className="media-tools">
-          <label className="upload">导入 Markdown<input type="file" accept=".md,.markdown,.txt,text/markdown,text/plain" onChange={importMarkdown} /></label>
-          <label className="upload inline-image">在光标处插入图片<input type="file" accept="image/png,image/jpeg,image/webp,image/gif" onChange={(event) => upload(event, false)} /></label>
-          <button type="button" onClick={() => preview === null ? perform(async () => setPreview((await send('preview', { markdown })).html)) : setPreview(null)}>{preview === null ? '预览正文' : '关闭预览'}</button>
+        <div className="editor-toolbar">
+          <div className="body-view-options" role="group" aria-label="正文显示方式">
+            {[['split', '并排预览'], ['preview', '仅预览'], ['write', '仅编辑']].map(([mode, label]) =>
+              <button type="button" key={mode} aria-pressed={view === mode} onClick={() => setView(mode)}>{label}</button>)}
+          </div>
+          {view !== 'preview' && <div className="media-tools">
+            <label className="upload">导入 Markdown<input type="file" accept=".md,.markdown,.txt,text/markdown,text/plain" onChange={importMarkdown} /></label>
+            <label className="upload inline-image">在光标处插入图片<input type="file" accept="image/png,image/jpeg,image/webp,image/gif" onChange={(event) => upload(event, false)} /></label>
+          </div>}
         </div>
-        {preview !== null && <div className="prose preview" dangerouslySetInnerHTML={{ __html: preview }} />}
+        <div className="editor-body" data-view={view}>
+          <label className="editor-source" hidden={view === 'preview'}>正文（Markdown）
+            <textarea ref={textarea} value={markdown} onSelect={(event) => { selection.current = [event.target.selectionStart, event.target.selectionEnd]; }} onChange={(event) => setMarkdown(event.target.value)} maxLength={120000} rows={15} />
+          </label>
+          {view !== 'write' && <section className="editor-rendered" aria-label="实时预览">
+            <h2>实时预览</h2>
+            {previewHtml
+              ? <div className="prose preview" tabIndex={0} aria-label="正文预览" dangerouslySetInnerHTML={{ __html: previewHtml }} />
+              : <p className="preview muted">写下正文，文字和图片会显示在这里。</p>}
+          </section>}
+        </div>
         <div className="editor-actions">
           <button name="status" value="published" className="primary">{current?.status === 'published' ? '更新已发布文章' : '发布文章'}</button>
           <button name="status" value="draft">{current?.status === 'published' ? '撤下并转为草稿' : '保存草稿'}</button>
