@@ -33,7 +33,7 @@
         "query-input": "required name=search_term_string"
       },
       "hasPart": [
-        { "@type": "SiteNavigationElement", "name": "Blog", "description": "探索 Web3 技术、代码构建与黑客松经验分享。", "url": "https://booyuu.top/blog/blog.html" },
+        { "@type": "SiteNavigationElement", "name": "Blog", "description": "探索 Web3 技术、代码构建与黑客松经验分享。", "url": "https://booyuu.top/blog" },
         { "@type": "SiteNavigationElement", "name": "Planetary Logs", "description": "环球旅行摄影集与星际探索日志。", "url": "https://booyuu.top/travel/travel.html" },
         { "@type": "SiteNavigationElement", "name": "Projects", "description": "Ethicraft, PA Trading System 等核心项目展示。", "url": "https://booyuu.top/#projects" },
         { "@type": "SiteNavigationElement", "name": "Visuals", "description": "黑白与赛博朋克风格的摄影作品。", "url": "https://booyuu.top/blog/photos.html" }
@@ -462,6 +462,7 @@
             width: 100%;
         }
     </style>
+<script src="/blog-analytics.js" defer></script>
 </head>
 
 <body>
@@ -549,7 +550,7 @@
             class="hidden md:flex gap-10 font-mono text-xs tracking-widest pointer-events-auto items-center text-gray-400">
             <a href="#about" class="hover:text-white transition-colors" data-i18n="nav.about">ABOUT</a>
             <a href="#projects" class="hover:text-white transition-colors" data-i18n="nav.projects">PROJECTS</a>
-            <a href="blog/blog.html" class="hover:text-white transition-colors" data-i18n="nav.blog">BLOG</a>
+            <a href="blog" class="hover:text-white transition-colors" data-i18n="nav.blog">BLOG</a>
             <div class="relative group">
                 <button class="hover:text-white transition-colors flex items-center gap-1 py-4"><span
                         data-i18n="nav.system">SYSTEM</span> <i class="ri-arrow-down-s-line"></i></button>
@@ -712,7 +713,7 @@
             <div class="w-full max-w-6xl mx-auto px-8">
                 <div class="flex items-center justify-between mb-24 border-b border-white/10 pb-6">
                     <div class="data-pill">TRANSMISSIONS</div>
-                    <a href="blog/blog.html"
+                    <a href="blog"
                         class="font-mono text-xs text-dim hover:text-white transition-colors tracking-widest pointer-events-auto"
                         data-i18n="blog.readall">READ ALL -></a>
                 </div>
@@ -910,7 +911,7 @@
         <a href="#about" onclick="toggleMobileMenu()" class="text-2xl font-serif text-white tracking-widest">ABOUT</a>
         <a href="#projects" onclick="toggleMobileMenu()"
             class="text-2xl font-serif text-white tracking-widest">PROJECTS</a>
-        <a href="blog/blog.html" onclick="toggleMobileMenu()"
+        <a href="blog" onclick="toggleMobileMenu()"
             class="text-2xl font-serif text-white tracking-widest">BLOG</a>
         <a href="blog/photos.html" onclick="toggleMobileMenu()"
             class="text-sm font-mono text-dim tracking-widest border-b border-white/20 pb-1">// VISUAL LOGS</a>

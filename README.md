@@ -1,49 +1,17 @@
-# 🌌 Mindscape
+# Boyu 的个人网站
 
-![Project Status](https://img.shields.io/badge/Status-Active-brightgreen)
-![License](https://img.shields.io/badge/License-MIT-blue)
-![Web3](https://img.shields.io/badge/Web3-Enabled-orange)
+Next.js App Router 提供文章归档与管理后台。现有主页、相册、旅行、媒体和 Ethicraft 页面从 `public/` 提供，旧文章链接永久重定向至新的 Markdown 页面。
 
-> "Standing on the event horizon between finance and technology."
+- 博客 `/blog`
+- 后台 `/admin`
+- 网站浏览量与来源在 Vercel Web Analytics 查看
 
-This is the source code for my personal digital garden — a decentralized, Web3-native portfolio and blog platform.
+## 本地运行
 
-**Live Site:** [https://booyuu.top](https://booyuu.top)
+使用 Node.js 22 或 24，执行 `npm install` 和 `npm run dev`。未配置存储时，博客可读取随仓库迁移的原有文章。
 
-## ⚡ Key Features (Core Modules)
+后台读取服务端环境变量 `BLOG_ADMIN_PASSWORD`（至少 32 个字符）与私有 Vercel Blob 存储的 `BLOB_READ_WRITE_TOKEN`。把开发环境变量放在 `.env.local`。连接的 Blob 存储使用独立的生产和预览目录。在生产环境发布前部署管理员密码与存储变量，Vercel Analytics 在项目控制台管理。
 
-This project is not just a static site; it's a showcase of modern Web3 interactions built with vanilla JavaScript (no heavy frameworks).
+文章使用 Markdown。图片支持 JPG、PNG、WebP 和 GIF，单张最大 4 MB。管理员可编辑已发布文章，也可撤下并转为草稿。文章地址在首次保存后固定。修改管理员密码并重新部署会使旧会话失效。
 
-### 1. 🔗 Web3 Connectivity (Neural Link)
-- **Multi-Wallet Support:** Native integration with **OKX Wallet** and **MetaMask**.
-- **Smart Routing:** Automatically detects installed extensions and prevents conflicts.
-- **State Management:** Handles connection, disconnection, and account switching seamlessly.
-
-### 2. 📡 Network Awareness (Radar)
-- **Real-time Detection:** Instantly identifies the connected blockchain network.
-- **Multi-Chain Support:** Customized UI for **Ethereum**, **Sepolia**, and **OKX X Layer (ZK-Rollup)**.
-- **Event Listeners:** UI updates automatically when the user switches chains in their wallet.
-
-### 3. ⛽ Hybrid Payment Gateway (Fuel System)
-- **Smart Tipping:**
-  - **Connected Users:** One-click transaction via wallet (`eth_sendTransaction`).
-  - **Mobile/Guest Users:** Auto-generated dynamic QR codes for manual transfers.
-- **Multi-Channel:** Integrated UI for Crypto (ETH), Buy Me a Coffee (Global), and Aifadian (CN).
-
-### 4. 🎨 Cyberpunk Aesthetics
-- **Visuals:** Three.js particle systems & GSAP animations.
-- **Privacy First:** No cookies, no tracking, pure code.
-
-## 🛠️ Tech Stack
-
-* **Frontend:** HTML5, Tailwind CSS, Vanilla JS (ES6+)
-* **Web3:** Ethers.js provider logic (Native implementation)
-* **Animation:** GSAP, Three.js, Lenis (Smooth Scroll)
-* **Hosting:** GitHub Pages & Custom Domain
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-*Built with ❤️ and ☕ by Boyu in Singapore.*
+原站 MIT 许可见 LICENSE。
