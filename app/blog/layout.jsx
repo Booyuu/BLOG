@@ -1,9 +1,9 @@
 import Link from 'next/link';
-import Script from 'next/script';
+import BlogAnalytics from './analytics';
 
 export default function BlogLayout({ children }) {
   return <>
-    <Script src="/blog-analytics.js" strategy="afterInteractive" />
+    <BlogAnalytics />
     <header className="site-header">
       <nav className="shell navigation" aria-label="主导航">
         <a className="wordmark" href="/">Boyu<span>.</span></a>

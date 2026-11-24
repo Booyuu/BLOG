@@ -63,7 +63,7 @@ export function LogoutButton() {
   return <div><button onClick={logout} disabled={busy}>退出登录</button>{error && <p role="alert" className="error">{error}</p>}</div>;
 }
 
-export function Editor({ post, categories }) {
+export function Editor({ post, categories, suggestedSlug }) {
   const router = useRouter();
   const textarea = useRef(null);
   const [current, setCurrent] = useState(post);
@@ -155,7 +155,7 @@ export function Editor({ post, categories }) {
       <fieldset disabled={busy}>
         <label>标题<input name="title" defaultValue={post?.title} maxLength={120} required /></label>
         <div className="editor-grid">
-          <label>文章链接<input name="slug" defaultValue={current?.slug} pattern={String.raw`[a-z0-9][a-z0-9\-]{0,79}`} placeholder="my-first-post" readOnly={Boolean(current)} maxLength={80} required /></label>
+          <label>文章链接<input name="slug" defaultValue={current?.slug ?? suggestedSlug} pattern={String.raw`[a-z0-9][a-z0-9\-]{0,79}`} placeholder="my-first-post" readOnly={Boolean(current)} maxLength={80} required /></label>
           <label>分类<select name="category" defaultValue={post?.category ?? categories[0]}>{categories.map((category) => <option key={category}>{category}</option>)}</select></label>
         </div>
         <label>摘要<input name="description" defaultValue={post?.description} maxLength={240} /></label>

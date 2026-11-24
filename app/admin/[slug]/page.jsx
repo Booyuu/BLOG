@@ -13,5 +13,8 @@ export default async function EditPage({ params }) {
   const { posts } = await readContent();
   const post = slug === 'new' ? null : posts.find((item) => item.slug === slug);
   if (!post && slug !== 'new') notFound();
-  return <Editor post={post} categories={categories} />;
+  const date = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Asia/Singapore' })
+    .format(new Date()).replaceAll('-', '');
+  const suggestedSlug = 'post-' + date + '-' + crypto.randomUUID().slice(0, 6);
+  return <Editor post={post} categories={categories} suggestedSlug={suggestedSlug} />;
 }
