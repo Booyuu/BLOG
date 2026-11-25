@@ -8,8 +8,8 @@ import { readSiteContent } from '../../lib/site-content';
 export const dynamic = 'force-dynamic';
 
 const about = {
-  en: 'I build tools at NovaStudio that make it easier to create. Away from trading screens, I’m drawn to Norway’s fjords, Ólafur Arnalds’ music and the small things worth remembering.',
-  zh: '我在 NovaStudio 做降低创作门槛的工具。在 K 线之外，我喜欢挪威的峡湾、Ólafur Arnalds 的音乐，也在这里记录生活里值得记下的时刻。',
+  en: 'Away from trading screens, I’m drawn to Norway’s fjords, Ólafur Arnalds’ music and the small things worth remembering.',
+  zh: '在 K 线之外，我喜欢挪威的峡湾、Ólafur Arnalds 的音乐，也在这里记录生活里值得记下的时刻。',
 };
 
 function escape(value) {
